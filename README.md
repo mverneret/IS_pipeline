@@ -126,6 +126,8 @@ Outputs in OUT_DIR:
 
 ___
 ## Correspondance
+Benjamin Riocreux-Verney ()
+Joeclyn Turpin (jocelyn.turpin@univ-lyon1.fr)
 
 ## Citation
 ___
