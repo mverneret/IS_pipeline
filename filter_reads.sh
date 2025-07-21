@@ -68,7 +68,9 @@ for i in $(seq -w 1 $nb_barcodes); do
   echo "####### 2. Mapping reads on LTRs - barcode$i"
   # LTR3
   bowtie2 --sensitive-local -x "${REF_DIR}/${ref_name}_endU3RU5_index" -U "${FASTQ_DEMUX}/SQK-NBD114-96_barcode${i}_Q${min_quality}.fastq" -S "${OUT_DIR}/barcode${i}_mapping_endU3RU5_SUP.sam" -N 1
+  #Keep mapped reads
   samtools view -h -F 4 "${OUT_DIR}/barcode${i}_mapping_endU3RU5_SUP.sam" > "${OUT_DIR}/barcode${i}_mapped_endU3RU5_SUP.sam"
+  #Convert sam to fastq
   samtools fastq "${OUT_DIR}/barcode${i}_mapped_endU3RU5_SUP.sam" > "${OUT_DIR}/barcode${i}_mapped_endU3RU5_SUP.fastq"
   # LTR5
   bowtie2 --sensitive-local -x "${REF_DIR}/${ref_name}_startU3_index" -U "${FASTQ_DEMUX}/SQK-NBD114-96_barcode${i}_Q${min_quality}.fastq" -S "${OUT_DIR}/barcode${i}_mapping_startU3_SUP.sam" -N 1
@@ -78,6 +80,7 @@ for i in $(seq -w 1 $nb_barcodes); do
   echo "####### 3. Mapping reads on provirus w/o LTR - barcode$i"
   # LTR3
   bowtie2 --sensitive-local -x "${REF_DIR}/${ref_name}_provirus_wo_LTR_index" -U "${OUT_DIR}/barcode${i}_mapped_endU3RU5_SUP.fastq" -S "${OUT_DIR}/barcode${i}_mapped_endU3RU5_mapping_${ref_name}_provirus_wo_LTR_SUP.sam" -N 1
+  #Keep non mapped reads
   samtools view -h -f 4 "${OUT_DIR}/barcode${i}_mapped_endU3RU5_mapping_${ref_name}_provirus_wo_LTR_SUP.sam" > "${OUT_DIR}/barcode${i}_LTR3_SUP.sam"
   # LTR5
   bowtie2 --sensitive-local -x "${REF_DIR}/${ref_name}_provirus_wo_LTR_index" -U "${OUT_DIR}/barcode${i}_mapped_startU3_SUP.fastq" -S "${OUT_DIR}/barcode${i}_mapped_startU3_mapping_${ref_name}_provirus_wo_LTR_SUP.sam" -N 1
