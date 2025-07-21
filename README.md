@@ -6,16 +6,16 @@ Pipeline inspired from PCIP-seq and Insert-seq that use amplification in long of
 ## Workflow
 <img src="image/Image1.png" width="50%">
 
-## Prerequisites
+## Dependancies
 - dorado
-- bowtie2
+- bowtie2 (2-2.1.0)
 - Nanofilt
-- samtools
-- bedtools
-- python
-- minimap2
-- seqkt
-- R
+- samtools (1.16.1)
+- bedtools (v2.30.0)
+- python (3.10.14)
+- minimap2 (2.26-r1175)
+- seqkt (1.5-r133)
+- R (> 4.3.1)
 
 ## 1- Basecalling
 Run on GPU -> .fast5 to .fastq
