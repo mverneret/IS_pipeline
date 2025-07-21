@@ -57,12 +57,12 @@ Options:
   -b <nb_barcode>      | Number of barcodes
 ```
 
-Outputs in OUT_DIR (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
-- barcode${i}_mapping_${a}_SUP.sam : Mapping results on start LTR5 or end LTR3
-- barcode${i}_mapped_${a}_SUP.sam|fastq : Only mapped reads on start LTR5 or end LTR3
-- barcode${i}_mapped_${a}_mapping_${ref_name}_provirus_wo_LTR_SUP.sam : Mapping results on provirus w/o LTR sequences
-- barcode${i}_${a}_SUP.sam : Only non-mapped reads on provirus w/o LTR sequences
-- barcode${i}_${a}_filtered_size_SUP.sam|fastq : Reads after all the steps + size filtering
+Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+- ```barcode${i}_mapping_${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
+- ```barcode${i}_mapped_${a}_SUP.sam|fastq``` : Only mapped reads on start LTR5 or end LTR3
+- ```barcode${i}_mapped_${a}_mapping_${ref_name}_provirus_wo_LTR_SUP.sam``` : Mapping results on provirus w/o LTR sequences
+- ```barcode${i}_${a}_SUP.sam``` : Only non-mapped reads on provirus w/o LTR sequences
+- ```barcode${i}_${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering
 
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
@@ -83,9 +83,9 @@ Options:
 ```
 
 Outputs in DIR_UMI:
-- barcode${i}_${LTR}_SUP_fwd.fasta : contains the reads in fwd orientation compared to ref LTR sequences
-- barcode${i}_${LTR}_SUP_rev.fasta : contains reads in rev orientation compared to ref LTR sequences
-- barcode${i}_LTR${a}_UMI.fasta : read sequences with identified UMi sequences in the read names
+- ```barcode${i}_${LTR}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
+- ```barcode${i}_${LTR}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
+- ```barcode${i}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
   
 ## 5- Mapping
 
