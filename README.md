@@ -1,5 +1,5 @@
 # Integration pipeline
-Pipeline inspired from PCIP-seq and Insert-seq that use amplification in long of integration sites so chimeric reads including viral and host sequences. In order to do this libraires prepared amplifying integration sites (IS) with LTR specific primers and primers in Nanopore barcodes. The theorical structure of the reads is shown bellow -> add fixed linker sequences including an identifier called UMI with specific structure  
+Pipeline inspired from PCIP-seq (ref) and Insert-seq (ref) pipelines based on amplification of integration sites (IS) and long read sequencing using Nanopore technology. To do this the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers. The resulting reads are filtered to keep only the one including viral and host sequences. The main steps and theorical structure of the reads (for LTR5 only) are shown bellow.
 
 <img src="image/Image2.png" width="50%">
 
@@ -68,7 +68,7 @@ Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. 
 We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
-Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. 
+Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. **Add more details on the extraction of the UMI and on the UMI structure**
 
 The UMI extraction can be performed using the ```extract_umi.sh``` script.
 
