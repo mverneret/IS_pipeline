@@ -84,7 +84,7 @@ Options:
   <max_error>        | Max pattern distance for UMI
 ```
 
-Outputs in DIR_UMI (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+Outputs in ```DIR_UMI``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
 - ```barcode${i}_${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
 - ```barcode${i}_${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
 - ```barcode${i}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
@@ -106,20 +106,20 @@ Options:
   <REF_DIR>         | Path to directory of the reference genome
   <REF_name>        | Name of the reference genome file in .fasta
   <TE_annot>        | Name of the ERV annotation file in .bed
-  <OUT_DIR>         | Path to directory for output file
+  <OUT_DIR>         | Path to directory for output files
   <FASTQ_DIR>       | Path to directory contaiining the input .fastq files
   <prefix_chr>      | Préfix of the chromosome names (to keep only chr in the refernece and delete scaffolds)
   <virus_name>      | Name of the virus/sequence used in reference for the target
   <nb_barcodes>     | Number of barcodes to analyze
 ```
 
-Outputs in REF_DIR (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+Outputs in ```REF_DIR```  (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
 - ```${REF%.fa}_noscaffold_masked.fa``` : Masked reference genome without scaffolds
 - ```${REF%.fa}_masked_${a}_withprimer.fa``` : Masked reference genome without scaffolds + LTR sequence 
 - ```${REF%.fa}_masked_${a}_withprimer.mmi``` : Indexed hybrid reference
 
-Outputs in OUT_DIR:
-- ```barcode${i}_LTR${a}_mapped_${REF}_SUP.sam|bam``` : minimap2 output file
+Outputs in ```OUT_DIR```:
+- ```barcode${i}_LTR${a}_mapped_${REF}_SUP.sam|bam|paf``` : minimap2 output file
 - ```barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam```
 
 ## 6- Integration sites extraction
@@ -134,10 +134,36 @@ After the mapping, the goal is identofy the different integration sites using re
 All these steps can be performed using ```run_IS.sh``` script that will call different R functions.
 
 **Usage**
-
-
-<sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> n\
+```sh
+./run_IS.sh <sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> \
     <lengthTarget_LTR5> <targetName_LTR3> <lengthTarget_LTR3> <maxgapIS> <mapq_val> <nb_read_per_umi> <maxgapShS> <mms> <threshold_raw> <win_merge>
+
+Options:
+  <sample_name>         | Name of the sample (ex: barcode01)
+  <R_package_path>      | Path to directory of the different R functions (ex: ~/script/Rpackages/)
+  <out_path>            | Path to directory for output files (ex: ~/results/R_clonality/)
+  <input_paf_path>      | Path to directory of the paf input files obtained after the step 5 (ex: ~/results/mapping/paf/)
+  <input_UMI_path>      | Path to directory of the UMI input files obtained after the step 4 (ex: ~/results/extract_UMI/)
+  <assembly>            | Name of the reference assembly
+  <targetName_LTR5>     | Name of the LTR5 virus sequence (used for the mapping)
+  <lengthTarget_LTR5>   | Total length of the LTR5 sequence
+  <targetName_LTR3>     | Name of the LTR3 virus sequence (used for the mapping)
+  <lengthTarget_LTR3>   | Total length of the LTR3 sequence
+  <maxgapIS>            | Maximal distance between IS to merge
+  <mapq_val>            | Minimum quality of mapping
+  <nb_read_per_umi>     | Minimum number of reads to conserve a UMI group
+  <maxgapShS>           | Maximal distance between ShS to merge
+  <mms>                 | Maximum number of mismatchs to regroup UMI in a group
+  <threshold_raw>       | Minimum number of raw reads by IS to keep it
+  <win_merge>           | Maximal distance between LTR5 and LTR3 IS to merge
+```
+
+Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+- ```*merged*``` : Each reads with all their info + attributed UMI group
+- ```*positionreads*``` : Each reads with all their info + UMI, ShS and IS group
+- ```*countedreadsLTR3|LTR5*``` : Grouped IS with coordinates and nb of reads
+  ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
+- ```*clonalityResults*.txt``` : Final IS results with clonality %
 
 ___
 ## Correspondance
