@@ -66,7 +66,8 @@ Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU
 - ```barcode${i}_${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering
 
 ## 4- Extract UMI 
-In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
+In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. 
+We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
 Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. 
 
 The UMI extraction can be performed using the ```extract_umi.sh``` script.
@@ -90,7 +91,10 @@ Outputs in DIR_UMI (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
   
 ## 5- Mapping
 The filtered reads were then mapped on the reference genome concatenated with start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
-The first step is then to mask the reference genome with the virus and the apparented ERV sequences, then create the hybrid reference and map the filtered reads on it using minimap2.
+The steps includes :
+- Mask the reference genome with the virus and the apparented ERV sequences
+- Create the hybrid reference concatenating host genome and LTR sequences
+- Map the filtered reads on the hybrid genome using minimap2
 
 The mapping can be performed using the ```mapping.sh``` script.
 
