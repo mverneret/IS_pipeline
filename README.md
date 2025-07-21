@@ -162,7 +162,7 @@ Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3R
 - ```*merged*``` : Each reads with all their info + attributed UMI group
 - ```*positionreads*``` : Each reads with all their info + UMI, ShS and IS group
 - ```*countedreadsLTR3|LTR5*``` : Grouped IS with coordinates and nb of reads
-  ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
+- ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
 - ```*clonalityResults*.txt``` : Final IS results with clonality %
 
 ___
