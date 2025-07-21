@@ -3,6 +3,7 @@ Pipeline inspired from PCIP-seq and Insert-seq that use amplification in long of
 
 <img src="image/Image2.png" width="50%">
 
+___
 ## Workflow
 <img src="image/Image1.png" width="50%">
 
@@ -99,13 +100,13 @@ The mapping can be performed using the ```mapping.sh``` script.
 
 Options:
   <REF_DIR>         | Path to directory of the reference genome
-  <REF_name>          | Name of the reference genome file in .fasta
-  <TE_annot>      | Name of the ERV annotation file in .bed
-  <OUT_DIR>   | Path to directory for output file
-  <FASTQ_DIR>        | Path to directory contaiining the input .fastq files
-  <prefix_chr>   | Préfix of the chromosome names (to keep only chr in the refernece and delete scaffolds)
-  <virus_name>  | Name of the virus/sequence used in reference for the target
-  <nb_barcodes>  | Number of barcodes to analyze
+  <REF_name>        | Name of the reference genome file in .fasta
+  <TE_annot>        | Name of the ERV annotation file in .bed
+  <OUT_DIR>         | Path to directory for output file
+  <FASTQ_DIR>       | Path to directory contaiining the input .fastq files
+  <prefix_chr>      | Préfix of the chromosome names (to keep only chr in the refernece and delete scaffolds)
+  <virus_name>      | Name of the virus/sequence used in reference for the target
+  <nb_barcodes>     | Number of barcodes to analyze
 ```
 
 Outputs in REF_DIR (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
@@ -122,7 +123,5 @@ Outputs in OUT_DIR:
 ___
 ## Correspondance
 
-___
 ## Citation
-
 ___
