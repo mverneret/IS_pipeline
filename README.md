@@ -48,13 +48,13 @@ Options:
   -r <REF_DIR>         | Path to LTR_ref_sequences directory
   -o <OUT_DIR>         | Path to output directory
   -f <FASTQ_DEMUX>     | Path to demultiplexed FASTQ files directory 
-  -n <ref_name>        | Virus reference name (used for fasta ref files and index names 
+  -n <ref_name>        | Virus reference name (used for fasta ref files and index names) 
   -q <min_quality>     | Minimum quality for Nanofilt
   -g <length_genome>   | Minimum genome length in reads
   -a <length_adaptor>  | Adaptor length
   -l <length_LTR5>     | LTR5 length in reads (with primer)
   -m <length LTR3>     | LTR3 length in reads (with primer)
-  -b <nb_barcode>      | Number of barcodes
+  -b <nb_barcode>      | Number of barcodes to analyze
 ```
 
 Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
@@ -82,12 +82,40 @@ Options:
   <max_error>        | Max pattern distance for UMI
 ```
 
-Outputs in DIR_UMI:
-- ```barcode${i}_${LTR}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
-- ```barcode${i}_${LTR}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
+Outputs in DIR_UMI (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+- ```barcode${i}_${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
+- ```barcode${i}_${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
 - ```barcode${i}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
   
 ## 5- Mapping
+The filtered reads were then mapped on the reference genome concatenated with start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
+The first step is then to mask the reference genome with the virus and the apparented ERV sequences, then create the hybrid reference and map the filtered reads on it using minimap2.
+
+The mapping can be performed using the ```mapping.sh``` script.
+
+**Usage**
+```sh
+./mapping.sh <REF_DIR> <REF_name> <TE_annot> <OUT_DIR> <FASTQ_DIR> <prefix_chr> <virus_name> <nb_barcodes>
+
+Options:
+  <REF_DIR>         | Path to directory of the reference genome
+  <REF_name>          | Name of the reference genome file in .fasta
+  <TE_annot>      | Name of the ERV annotation file in .bed
+  <OUT_DIR>   | Path to directory for output file
+  <FASTQ_DIR>        | Path to directory contaiining the input .fastq files
+  <prefix_chr>   | Préfix of the chromosome names (to keep only chr in the refernece and delete scaffolds)
+  <virus_name>  | Name of the virus/sequence used in reference for the target
+  <nb_barcodes>  | Number of barcodes to analyze
+```
+
+Outputs in REF_DIR (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+- ```${REF%.fa}_noscaffold_masked.fa``` : Masked reference genome without scaffolds
+- ```${REF%.fa}_masked_${a}_withprimer.fa``` : Masked reference genome without scaffolds + LTR sequence 
+- ```${REF%.fa}_masked_${a}_withprimer.mmi``` : Indexed hybrid reference
+
+Outputs in OUT_DIR:
+- ```barcode${i}_LTR${a}_mapped_${REF}_SUP.sam|bam``` : minimap2 output file
+- ```barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam```
 
 ## 6- Integration sites extraction
 
