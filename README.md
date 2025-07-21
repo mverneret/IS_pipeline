@@ -13,7 +13,17 @@ dorado summary $OUT_BAM_DIR/RUN_02_SUP.bam > $OUT_BAM_DIR/RUN_02_SUP_summary.tsv
 dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/merged.bam --output-dir $OUTPUT_DIR/demux_both_end --barcode-both-ends --emit-fastq
 
 ## 3- Filtering steps
-
+./filter_reads.sh \
+  -r /path/to/ref \
+  -o /path/to/output \
+  -f /path/to/fastq_demux \
+  -n 2369 \
+  -q 20 \
+  -g 50 \
+  -a 57 \
+  -l 37 \
+  -m 162 \
+  -b 20
 
 ## 3'- Extract UMI (inspired from Ivančić et al., 2022)
 DATA_SAM=/beegfs/project/rer/Seq/2025ONTPROM01/results/bowtie2/JSRV
