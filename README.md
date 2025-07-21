@@ -1,5 +1,6 @@
 # Integration pipeline
 
+<img src="image1.png" width="50%">
 Structure des reads thérorique + image pipeline global
 
 ## 1- Basecalling
