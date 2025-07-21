@@ -123,11 +123,26 @@ Outputs in OUT_DIR:
 - ```barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam```
 
 ## 6- Integration sites extraction
+After the mapping, the goal is identofy the different integration sites using reads at the junction. The main steps are:
+- Keep reads that mapped on the host genome and on the LTR sequences
+- Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
+- Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
+- Remove PCR duplicates according to the IS, ShS and UMI groups
+- Merge LTR5 and LTR3 information 
+- Quantify clonal abundancy (for each IS nb of sister cells without PCR duplicates)
+
+All these steps can be performed using ```run_IS.sh``` script that will call different R functions.
+
+**Usage**
+
+
+<sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> n\
+    <lengthTarget_LTR5> <targetName_LTR3> <lengthTarget_LTR3> <maxgapIS> <mapq_val> <nb_read_per_umi> <maxgapShS> <mms> <threshold_raw> <win_merge>
 
 ___
 ## Correspondance
 Benjamin Riocreux-Verney ()
-Joeclyn Turpin (jocelyn.turpin@univ-lyon1.fr)
+Jocelyn Turpin (jocelyn.turpin@univ-lyon1.fr)
 
 ## Citation
 ___
