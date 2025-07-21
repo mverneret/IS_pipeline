@@ -1,7 +1,6 @@
 # Integration pipeline
 
-<img src="image1.png" width="50%">
-Structure des reads thérorique + image pipeline global
+<img src="Image1.png" width="50%">
 
 ## 1- Basecalling
 Run on GPU
