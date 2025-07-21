@@ -28,4 +28,7 @@ dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/merged.bam --output-dir $OUTP
 ## 4- Extract UMI 
 (inspired from Ivančić et al., 2022)
 
+## 5- Mapping
+
+## 6- Integration sites extraction
 
