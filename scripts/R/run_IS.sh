@@ -12,7 +12,7 @@
 module load statistics/R/4.3.1
 
 if [ "$#" -ne 17 ]; then
-    echo "Usage: $0 >sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> n\
+    echo "Usage: $0 <sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> n\
     <lengthTarget_LTR5> <targetName_LTR3> <lengthTarget_LTR3> <maxgapIS> <mapq_val> <nb_read_per_umi> <maxgapShS> <mms> <threshold_raw> <win_merge>"
     exit 1
 fi
