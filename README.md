@@ -1,9 +1,24 @@
 # Integration pipeline
+Pipeline inspired from PCIP-seq and Insert-seq that use amplification in long of integration sites so chimeric reads including viral and host sequences. In order to do this libraires prepared amplifying integration sites (IS) with LTR specific primers and primers in Nanopore barcodes. The theorical structure of the reads is shown above -> add fixed linker sequences including an identifier called UMI with specific structure  
 
-<img src="Image1.png" width="50%">
+<img src="image/Image2.png" width="50%">
+
+## Workflow
+<img src="image/Image1.png" width="50%">
+
+## Prerequisites
+- dorado
+- bowtie2
+- Nanofilt
+- samtools
+- bedtools
+- python
+- minimap2
+- seqkt
+- R
 
 ## 1- Basecalling
-Run on GPU
+Run on GPU -> .fast5 to .fastq
 Model : dna_r10.4.1_e8.2_400bps_sup@v5.0.0
 dorado basecaller --no-trim dna_r10.4.1_e8.2_400bps_sup@v5.0.0 $DATA_DIR > $OUT_BAM_DIR/RUN_02_SUP.bam
 dorado summary $OUT_BAM_DIR/RUN_02_SUP.bam > $OUT_BAM_DIR/RUN_02_SUP_summary.tsv
@@ -30,5 +45,5 @@ dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/merged.bam --output-dir $OUTP
 
 ## 5- Mapping
 
-## 6- Integration sites extraction
+### 6- Integration sites extraction
 
