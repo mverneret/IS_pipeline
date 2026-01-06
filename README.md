@@ -107,8 +107,8 @@ Options:
   <REF_name>        | Name of the reference genome file in .fasta
   <TE_annot>        | Name of the ERV annotation file in .bed
   <OUT_DIR>         | Path to directory for output files
-  <FASTQ_DIR>       | Path to directory contaiining the input .fastq files
-  <prefix_chr>      | Préfix of the chromosome names (to keep only chr in the refernece and delete scaffolds)
+  <FASTQ_DIR>       | Path to directory containining the input .fastq files
+  <prefix_chr>      | Prefix of the chromosome names (to keep only chr in the reference and delete scaffolds)
   <virus_name>      | Name of the virus/sequence used in reference for the target
   <nb_barcodes>     | Number of barcodes to analyze
 ```
