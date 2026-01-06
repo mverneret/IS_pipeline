@@ -123,7 +123,7 @@ Outputs in ```OUT_DIR```:
 - ```barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam```
 
 ## 6- Integration sites extraction
-After the mapping, the goal is identofy the different integration sites using reads at the junction. The main steps are:
+After the mapping, the goal is identify the different integration sites using reads at the junction between LTR sequences and host genome. The main steps are:
 - Keep reads that mapped on the host genome and on the LTR sequences
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
 - Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
@@ -167,7 +167,7 @@ Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3R
 
 ___
 ## Correspondance
-Benjamin Riocreux-Verney ()
+Benjamin Riocreux-Verney,
 Jocelyn Turpin (jocelyn.turpin@univ-lyon1.fr)
 
 ## Citation
