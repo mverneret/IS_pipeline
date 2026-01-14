@@ -1,64 +1,111 @@
 #!/bin/bash
+set -euo pipefail
 
+#######################
+# Help function
+#######################
 show_help() {
-  echo "Usage: $0 <REF_DIR> <REF_name> <TE_annot> <OUT_DIR> <FASTQ_DIR> <prefix_chr> <virus_name> <nb_barcodes>"
+    echo "Usage: $0 -r REF_DIR -f REF_NAME -t TE_ANNOT -o OUT_DIR -q FASTQ_DIR -c PREFIX_CHR -n VIRUS_NAME -i SAMPLE_PREFIX"
+    echo ""
+    echo "Arguments:"
+    echo "  -r  Reference directory"
+    echo "  -f  Reference host genome FASTA file name"
+    echo "  -t  TE annotation BED file"
+    echo "  -o  Output directory"
+    echo "  -q  Directory containing FASTQ files"
+    echo "  -c  Prefix of chromosomes to keep"
+    echo "  -n  Virus reference name (for LTR files)"
+    echo "  -i  Sample prefix for output files"
+    echo "  -h  Show this help message"
 }
 
-REF_DIR=$1
-REF=$2
-TE_annot=$3
-OUT_DIR=$4
-FASTQ=$5
-prefix_chr=$6
-virus_name=$7
-nb_barcodes=$8
+#######################
+# Parse arguments
+#######################
+while getopts "r:f:t:o:q:c:n:i:h" opt; do
+    case $opt in
+        r) REF_DIR="$OPTARG" ;;
+        f) REF_NAME="$OPTARG" ;;
+        t) TE_ANNOT="$OPTARG" ;;
+        o) OUT_DIR="$OPTARG" ;;
+        q) FASTQ_DIR="$OPTARG" ;;
+        c) PREFIX_CHR="$OPTARG" ;;
+        n) VIRUS_NAME="$OPTARG" ;;
+        i) SAMPLE_PREFIX="$OPTARG" ;;
+        h) show_help; exit 0 ;;
+        *) show_help; exit 1 ;;
+    esac
+done
 
-# Create output directory if needed
+# Check required arguments
+if [[ -z "${REF_DIR:-}" || -z "${REF_NAME:-}" || -z "${TE_ANNOT:-}" || -z "${OUT_DIR:-}" || -z "${FASTQ_DIR:-}" || -z "${PREFIX_CHR:-}" || -z "${VIRUS_NAME:-}" || -z "${SAMPLE_PREFIX:-}" ]]; then
+    echo "Error: Missing required arguments"
+    show_help
+    exit 1
+fi
+
 mkdir -p "$OUT_DIR"
 
+#######################
 # Step 1: Mask reference genome
-bedtools maskfasta -fi "${REF_DIR}/${REF}" -bed "${REF_DIR}/${TE_annot}" -fo "${REF_DIR}/${REF%.fa}_masked.fa"
+#######################
+echo "####### Mask host reference genome with TE annotation"
+MASKED_REF="${REF_DIR}/${REF_NAME%.fa}_masked.fa"
+bedtools maskfasta -fi "${REF_DIR}/${REF_NAME}" -bed "${REF_DIR}/${TE_ANNOT}" -fo "$MASKED_REF"
 
+#######################
 # Step 2: Remove scaffolds
-awk -v prefix_chr="^>${prefix_chr}" '
+#######################
+echo "####### Remove scaffolds from the host reference genome"
+NOSCAFF_REF="${REF_DIR}/${REF_NAME%.fa}_noscaffold_masked.fa"
+awk -v prefix_chr="^>${PREFIX_CHR}" '
 BEGIN { keep=0 }
 /^>/ { keep = ($0 ~ prefix_chr) }
 keep { print }
-' "${REF_DIR}/${REF%.fa}_masked.fa" > "${REF_DIR}/${REF%.fa}_noscaffold_masked.fa"
+' "$MASKED_REF" > "$NOSCAFF_REF"
 
-# Step 3: Add the LTR to the ref
-cat "${REF_DIR}/${REF%.fa}_noscaffold_masked.fa" "${REF_DIR}/${virus_name}_endU3RU5_withprimer.fa" > "${REF_DIR}/${REF%.fa}_masked_U5_withprimer.fa"
-cat "${REF_DIR}/${REF%.fa}_noscaffold_masked.fa" "${REF_DIR}/${virus_name}_startU3_withprimer.fa" > "${REF_DIR}/${REF%.fa}_masked_U3_withprimer.fa"
+#######################
+# Step 3: Add LTR to reference
+#######################
+echo "####### Add LTR sequences to the host reference genome"
+MASKED_U5="${REF_DIR}/${REF_NAME%.fa}_masked_U5_withprimer.fa"
+MASKED_U3="${REF_DIR}/${REF_NAME%.fa}_masked_U3_withprimer.fa"
+cat "$NOSCAFF_REF" "${REF_DIR}/${VIRUS_NAME}_endU3RU5_withprimer.fa" > "$MASKED_U5"
+cat "$NOSCAFF_REF" "${REF_DIR}/${VIRUS_NAME}_startU3_withprimer.fa" > "$MASKED_U3"
 
-# Step 4: Index hybrid references 
-minimap2 -d "${REF_DIR}/${REF%.fa}_masked_U3_withprimer.mmi" "${REF_DIR}/${REF%.fa}_masked_U3_withprimer.fa"
-minimap2 -d "${REF_DIR}/${REF%.fa}_masked_U5_withprimer.mmi" "${REF_DIR}/${REF%.fa}_masked_U5_withprimer.fa"
+#######################
+# Step 4: Index hybrid references
+#######################
+minimap2 -d "${MASKED_U3%.fa}.mmi" "$MASKED_U3"
+minimap2 -d "${MASKED_U5%.fa}.mmi" "$MASKED_U5"
 
-# Step 5: Mapping reads for each barcode
-for i in $(seq -w 1 $nb_barcodes); do
-  for a in 3 5; do
-    if [ "$a" -eq 3 ]; then
-      MMI_FILE="${REF_DIR}/${REF%.fa}_masked_U5_withprimer.mmi"
+#######################
+# Step 5: Map reads for each LTR
+#######################
+for LTR_NUM in 3 5; do
+    if [ "$LTR_NUM" -eq 3 ]; then
+        MMI_FILE="${MASKED_U5%.fa}.mmi"
     else
-      MMI_FILE="${REF_DIR}/${REF%.fa}_masked_U3_withprimer.mmi"
+        MMI_FILE="${MASKED_U3%.fa}.mmi"
     fi
 
-    FASTQ_FILE="${FASTQ}/barcode${i}_LTR${a}_filtered_size_SUP.fastq"
-    SAM_FILE="${OUT_DIR}/barcode${i}_LTR${a}_mapped_${REF}_SUP.sam"
-    BAM_FILE="${OUT_DIR}/barcode${i}_LTR${a}_mapped_${REF}_SUP.bam"
-    SORTED_BAM_FILE="${OUT_DIR}/barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam"
+    FASTQ_FILE="${FASTQ_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_filtered_size_SUP.fastq"
+    SAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.sam"
+    BAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.bam"
+    SORTED_BAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_sorted_SUP.bam"
 
-    # Align with minimap2
+    echo "####### Mapping $FASTQ_FILE to LTR${LTR_NUM} reference..."
     minimap2 -ax map-ont -t 8 "$MMI_FILE" "$FASTQ_FILE" > "$SAM_FILE"
 
-    # Convert SAM to PAF if needed
-    OUT_DIR_PAF="${OUT_DIR}/paf"
-    mkdir -p "$OUT_DIR_PAF"
-    paftools.js sam2paf "$SAM_FILE" > "${OUT_DIR_PAF}/barcode${i}_LTR${a}_mapped_${REF}_SUP.paf"
+    # Convert to PAF
+    PAF_DIR="${OUT_DIR}/paf"
+    mkdir -p "$PAF_DIR"
+    paftools.js sam2paf "$SAM_FILE" > "${PAF_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.paf"
 
-    # Convert SAM to BAM and sort/index
+    # Convert SAM -> BAM -> sorted BAM
     samtools view -@ 4 -Sb "$SAM_FILE" > "$BAM_FILE"
     samtools sort -@ 4 "$BAM_FILE" -o "$SORTED_BAM_FILE"
     samtools index -@ 4 "$SORTED_BAM_FILE"
-  done
 done
+
+echo "####### DONE - $SAMPLE_PREFIX"
