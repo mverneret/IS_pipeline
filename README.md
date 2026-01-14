@@ -16,7 +16,7 @@ ___
 - python (3.10.14)
 - minimap2 (2.26-r1175)
 - seqkt (1.5-r133)
-- R (> 4.3.1)
+- R (> 4.3.1) **Add R packages**
 
 ## 1- Basecalling
 Basecalling was performed on the files generated from the different sequencing runs using the Dorado basecaller using super accurate basecalling with GPU acceleration, converting .fast5 to .bam formats.
