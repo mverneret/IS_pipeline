@@ -29,41 +29,45 @@ dorado summary $OUT_BAM_DIR/RUN_${i}_SUP.bam > $OUT_BAM_DIR/RUN_${i}_SUP_summary
 Demultiplexing was conducted also using Dorado to separate reads by barcode and remove the Nanopore barcodes at both reads sides.
 **#manque étape de merge entre les bam produit par basecalling et le demutiplexing + manque étape bam to fastq after demultiplexing**
 ```sh
-dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/merged.bam --output-dir $OUTPUT_DIR/demux_both_end --barcode-both-ends --emit-fastq
+dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/RUN_${i}_SUP.bam --output-dir $OUTPUT_DIR/demux_both_end --barcode-both-ends --emit-fastq
 ```
+**Add info on the structure/names of the folder and files**
 
 ## 3- Filtering steps
 Reads were then filtered according to different criteria including :
 - Quality > Q20
-- Mapping on the LTR5 start or LTR3 end
+- Mapping on the LTR5 end or LTR3 start
 - Not mapping on provirus without LTR sequences
 - Host genome size > 50bp
 
-All these steps can be performed using the ```filter_reads.sh``` script that will loop on the different barcodes and deal with LTR5 and LTR3 reads.
+All these steps can be performed using the ```filter_reads.sh``` script that will deal with LTR5 and LTR3 reads.
 
 **Usage**
 ```sh
-./filter_reads.sh -r <string> -o <string> -f <string> -n <string/int> -q <int> -g <int> -a <int> -l <int> -m <int> -b <int>
+./filter_reads.sh -r <string> -o <string> -f <string> -i <string> -n <string/int> -q <int> -g <int> -a <int> -l <int> -m <int>
 
 Options:
-  -r <REF_DIR>         | Path to LTR_ref_sequences directory
+  -r <REF_DIR>         | Path to LTR reference sequences directory
   -o <OUT_DIR>         | Path to output directory
-  -f <FASTQ_DEMUX>     | Path to demultiplexed FASTQ files directory 
-  -n <ref_name>        | Virus reference name (used for fasta ref files and index names) 
-  -q <min_quality>     | Minimum quality for Nanofilt
-  -g <length_genome>   | Minimum genome length in reads
-  -a <length_adaptor>  | Adaptor length
-  -l <length_LTR5>     | LTR5 length in reads (with primer)
-  -m <length LTR3>     | LTR3 length in reads (with primer)
-  -b <nb_barcode>      | Number of barcodes to analyze
+  -f <FASTQ_FILE>      | Path to demultiplexed FASTQ files directory 
+  -n <REF_NAME>        | Virus reference name (used for fasta ref files and index names)
+  -i <SAMPLE_NAME>     | Sample name (used in prefix for output files)
+  -q <MIN_QUALITY>     | Minimum quality for Nanofilt
+  -g <LENGTH_GENOME>   | Minimum genome length in reads
+  -a <LENGTH_ADAPTOR>  | Adaptor length
+  -l <LENGTH_LTR5>     | LTR5 length in reads (with primer)
+  -m <LENGHT_LTR3>     | LTR3 length in reads (with primer)
 ```
-
+Input files in **X folder**:
+- Fastq files from demultiplexing
+- Fasta sequences of the reference virus without primers (LTR5:"endU3RU5"; LTR3:"stratU3"; INT:"provirus_wo_LTR")
+  
 Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
-- ```barcode${i}_mapping_${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
+- **```barcode${i}_mapping_${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3**
 - ```barcode${i}_mapped_${a}_SUP.sam|fastq``` : Only mapped reads on start LTR5 or end LTR3
 - ```barcode${i}_mapped_${a}_mapping_${ref_name}_provirus_wo_LTR_SUP.sam``` : Mapping results on provirus w/o LTR sequences
 - ```barcode${i}_${a}_SUP.sam``` : Only non-mapped reads on provirus w/o LTR sequences
-- ```barcode${i}_${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering
+- **```barcode${i}_${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering**
 
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. 
@@ -74,16 +78,18 @@ The UMI extraction can be performed using the ```extract_umi.sh``` script.
 
 **Usage**
 ```sh
-./extract_umi.sh <DATA_SAM> <DIR_UMI> <nb_barcodes> <adapter_length> <max_error>
+./extract_umi.sh -s <string> -o <string> -a <int> -e <int> -i <string>
 
 Options:
-  <DATA_SAM>         | Path to directory of the SAM files obtained after the LTR mapping (barcode${i}_mapping_${a}_SUP.sam)
-  <DIR_UMI>          | Path to UMI output directory
-  <nb_barcodes>      | Number of barcodes to analyze
-  <adapter_length>   | Linker size 
-  <max_error>        | Max pattern distance for UMI
+  -s <DATA_SAM>         | Path to directory of the SAM files obtained after the LTR mapping (barcode${i}_mapping_${a}_SUP.sam)
+  -o <DIR_UMI>          | Path to UMI output directory
+  -a <ADAPTER_LENGTH>   | Linker size 
+  -e <MAX_ERROR>        | Max pattern distance for UMI (allowed error)
+  -i <SAMPLE_PREFIX>    | Sample name used as prefix for output files
 ```
-
+Input files in **X folder**:
+- sam files after bowtie2 mapping for LTR5 and 3
+  
 Outputs in ```DIR_UMI``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
 - ```barcode${i}_${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
 - ```barcode${i}_${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
@@ -99,19 +105,24 @@ The steps includes :
 The mapping can be performed using the ```mapping.sh``` script.
 
 **Usage**
-```sh
-./mapping.sh <REF_DIR> <REF_name> <TE_annot> <OUT_DIR> <FASTQ_DIR> <prefix_chr> <virus_name> <nb_barcodes>
+```sh ./mapping.sh -r REF_DIR -f REF_NAME -t TE_ANNOT -o OUT_DIR -q FASTQ_DIR -c PREFIX_CHR -n VIRUS_NAME -i SAMPLE_PREFIX"
 
+**Add an option to keep/or not the scaffold**
 Options:
-  <REF_DIR>         | Path to directory of the reference genome
-  <REF_name>        | Name of the reference genome file in .fasta
-  <TE_annot>        | Name of the ERV annotation file in .bed
-  <OUT_DIR>         | Path to directory for output files
-  <FASTQ_DIR>       | Path to directory containining the input .fastq files
-  <prefix_chr>      | Prefix of the chromosome names (to keep only chr in the reference and delete scaffolds)
-  <virus_name>      | Name of the virus/sequence used in reference for the target
-  <nb_barcodes>     | Number of barcodes to analyze
+  -r <REF_DIR>         | Path to directory of the reference files
+  -f <REF_NAME>        | Name of the reference genome file in .fasta
+  -t <TE_ANNOT>        | Name of the ERV annotation file in .bed
+  -o <OUT_DIR>         | Path to directory for output files
+  -q <FASTQ_DIR>       | Path to directory containining the input .fastq files
+  -c <PREFIX_CHR>      | Prefix of the chromosome names (to keep only chr in the reference and delete scaffolds)
+  -n <VIRUS_NAME>      | Name of the virus sequence used in reference for the target
+  -i <SAMPLE_PREFIX>   | Sample prefix for output files
 ```
+Input files in **X folder**:
+- reference genome in fasta
+- ERV annotation in bed
+- Virus reference sequences in fasta (with primers)
+- fastq files after bowtie2 mapping + filtering
 
 Outputs in ```REF_DIR```  (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
 - ```${REF%.fa}_noscaffold_masked.fa``` : Masked reference genome without scaffolds
@@ -165,6 +176,7 @@ Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3R
 - ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
 - ```*clonalityResults*.txt``` : Final IS results with clonality %
 
+**Add info about test dataset and scripts + parameters file**
 ___
 ## Correspondance
 Benjamin Riocreux-Verney,
