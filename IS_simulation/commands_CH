@@ -1,25 +1,25 @@
 bash /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref/ARS12_noscaffold_masked.fa \
-  -n 1000000 \
+  -n 1000 \
   -f 260 \
   -l /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/data/seq_LTR_linker_CH.fasta \
-  -d random_IS_CH_1m \
+  -d random_IS_CH_1k \
   -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/sim \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1m.log 2>&1
+  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k.log 2>&1
 
 
 bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/filter_reads.sh \
   -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref \
   -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
-  -f /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/sim/random_IS_CH_1m_reads.fq \
-  -i random_IS_CH_1m \
+  -f /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/sim/random_IS_CH_1k_reads.fq \
+  -i random_IS_CH_1k \
   -n 3824 \
   -q 20 \
   -g 50 \
   -a 57 \
   -l 63 \
-  -m 188
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1m_bowtie2.log 2>&1
+  -m 188 \
+  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_bowtie2.log 2>&1
 
 
 bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/extract_umi.sh \
@@ -27,8 +27,8 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/extract_umi.sh \
   -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/extract_UMI \
   -a 57 \
   -e 0 \
-  -i random_IS_CH_1m \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1m_extract_umi.log 2>&1
+  -i random_IS_CH_1k \
+  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_extract_umi.log 2>&1
 
 bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/mapping.sh \
   -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref \
@@ -37,12 +37,12 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/mapping.sh \
   -q /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
   -c NC \
   -n 3824 \
-  -i random_IS_CH_1m \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1m_mapping.log 2>&
+  -i random_IS_CH_1k \
+  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_mapping.log 2>&1
 
 
 bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/run_IS.sh \
-  -i random_IS_CH_1m \
+  -i random_IS_CH_1k \
   -r /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/Rpackage/ \
   -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/R_clonality/ \
   -p /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/mapping/paf/ \
@@ -59,4 +59,4 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/run_IS.sh \
   -m 2 \
   -t 1 \
   -w 25 \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1m_IS.log 2>&
+  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_IS.log 2>&1
