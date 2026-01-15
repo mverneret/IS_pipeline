@@ -100,13 +100,13 @@ samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.sam" > "${OUT_DIR}/
 echo "####### 3. Mapping reads on provirus without LTR - ${SAMPLE_NAME}"
 
 # LTR3
-SAM_PRO_END="${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
+SAM_PRO_END="${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
 bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
   -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.fastq" -S "$SAM_PRO_END" -N 1
 samtools view -h -f 4 "$SAM_PRO_END" > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_SUP.sam"
 
 # LTR5
-SAM_PRO_START="${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
+SAM_PRO_START="${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
 bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
   -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.fastq" -S "$SAM_PRO_START" -N 1
 samtools view -h -f 4 "$SAM_PRO_START" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_SUP.sam"
@@ -129,4 +129,3 @@ awk -v min_len="$MIN_LEN_LTR5" 'length($10) >= min_len || $1 ~ /^@/' "${OUT_DIR}
 samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq"
 
 echo "####### DONE - ${SAMPLE_NAME}"
-echo "####### DONE."
