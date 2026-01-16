@@ -10,7 +10,7 @@ ___
 ## Dependancies
 - dorado
 - bowtie2 (2-2.1.0)
-- Nanofilt
+- Nanofilt (2.8.0)
 - samtools (1.16.1)
 - bedtools (v2.30.0)
 - python (3.10.14) + edlib, pysam, tqdm, pandas, biopython
@@ -31,20 +31,19 @@ Demultiplexing was conducted also using Dorado to separate reads by barcode and 
 ```sh
 dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/RUN_${i}_SUP.bam --output-dir $OUTPUT_DIR/demux_both_end --barcode-both-ends --emit-fastq
 ```
-**Add info on the structure/names of the folder and files**
 
 ## 3- Filtering steps
-Reads were then filtered according to different criteria including :
-- Quality > Q20
+Reads are filtered according to different criteria including :
+- Mapping quality (> Q20)
 - Mapping on the LTR5 end or LTR3 start
 - Not mapping on provirus without LTR sequences
-- Host genome size > 50bp
+- Host genome size mapped (> 50bp)
 
 All these steps can be performed using the ```filter_reads.sh``` script that will deal with LTR5 and LTR3 reads.
 
 **Usage**
 ```sh
-./filter_reads.sh -r <string> -o <string> -f <string> -i <string> -n <string/int> -q <int> -g <int> -a <int> -l <int> -m <int>
+./filter_reads.sh -r <string> -o <string> -f <string> -n <string> -i <string> -q <int> -g <int> -a <int> -l <int> -m <int>
 
 Options:
   -r <REF_DIR>         | Path to LTR reference sequences directory
@@ -58,19 +57,23 @@ Options:
   -l <LENGTH_LTR5>     | LTR5 length in reads (with primer)
   -m <LENGHT_LTR3>     | LTR3 length in reads (with primer)
 ```
-Input files in **X folder**:
+
+Input files :
 - Fastq files from demultiplexing
 - Fasta sequences of the reference virus without primers (LTR5:"endU3RU5"; LTR3:"stratU3"; INT:"provirus_wo_LTR")
+    - ```${VIRUS_NAME}_startU3.fa``` + ```${VIRUS_NAME}_startU3_withprimers.fa``` (LTR5)
+    - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
+    - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
   
-Outputs in ```OUT_DIR``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
-- **```barcode${i}_mapping_${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3**
-- ```barcode${i}_mapped_${a}_SUP.sam|fastq``` : Only mapped reads on start LTR5 or end LTR3
-- ```barcode${i}_mapped_${a}_mapping_${ref_name}_provirus_wo_LTR_SUP.sam``` : Mapping results on provirus w/o LTR sequences
-- ```barcode${i}_${a}_SUP.sam``` : Only non-mapped reads on provirus w/o LTR sequences
-- **```barcode${i}_${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering**
+Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
+- **```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3**
+- ```${SAMPLE_NAME}_mapped_LTR${a}_SUP.sam|fastq``` : Only mapped reads on start LTR5 or end LTR3
+- ```${SAMPLE_NAME}_mapped_LTR${a}_mapping_${VIRUS_NAME}_provirus_wo_LTR_SUP.sam``` : Mapping results on provirus w/o LTR sequences
+- ```${SAMPLE_NAME}_LTR${a}_SUP.sam``` : Only non-mapped reads on provirus w/o LTR sequences
+- **```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering**
 
 ## 4- Extract UMI 
-In order to remove PCR duplicates for clonality quantification in the Step 6- it was necessary to extract UMI sequences from all the reads. 
+In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
 We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
 Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. **Add more details on the extraction of the UMI and on the UMI structure**
 
@@ -87,55 +90,57 @@ Options:
   -e <MAX_ERROR>        | Max pattern distance for UMI (allowed error)
   -i <SAMPLE_PREFIX>    | Sample name used as prefix for output files
 ```
-Input files in **X folder**:
-- sam files after bowtie2 mapping for LTR5 and 3
+Input files in ```bowtie2/```:
+- ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : sam files after bowtie2 mapping on LTR5 and 3
   
-Outputs in ```DIR_UMI``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
-- ```barcode${i}_${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
-- ```barcode${i}_${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
-- ```barcode${i}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
+Outputs in ```extract_umi/``` for each LTR${a} with a in {3,5}::
+- ```${SAMPLE_NAME}_LTR${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
+- ```${SAMPLE_NAME}_LTR${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
+- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
   
 ## 5- Mapping
-The filtered reads were then mapped on the reference genome concatenated with start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
+The filtered reads are then mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
 The steps includes :
-- Mask the reference genome with the virus and the apparented ERV sequences
+- Masking the reference genome with the apparented ERV sequences
 - Create the hybrid reference concatenating host genome and LTR sequences
 - Map the filtered reads on the hybrid genome using minimap2
 
-The mapping can be performed using the ```mapping.sh``` script.
+The first step is to prepare the host reference genome (masking + delete scaffold if wanted):
+```####Mask the reference genome using ERV/TE annotation
+bedtools maskfasta -fi reference_genome.fa -bed TE_annotation.bed -fo ref_masked.fa
+####Using the prefix of the chromosomes, delete the scaffolds from the reference
+prefix_chr="NC"
+awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' ref_masked.fa > ref_noscaffold_masked.fa```
+
+The mapping can then be performed using the ```mapping.sh``` script.
 
 **Usage**
-```sh ./mapping.sh -r REF_DIR -f REF_NAME -t TE_ANNOT -o OUT_DIR -q FASTQ_DIR -c PREFIX_CHR -n VIRUS_NAME -i SAMPLE_PREFIX"
+```sh
+./mapping.sh -r <string> -f <string> -o <string> -q <string> -c <string> -n <string> -i <string>
 
-**Add an option to keep/or not the scaffold**
 Options:
   -r <REF_DIR>         | Path to directory of the reference files
   -f <REF_NAME>        | Name of the reference genome file in .fasta
-  -t <TE_ANNOT>        | Name of the ERV annotation file in .bed
   -o <OUT_DIR>         | Path to directory for output files
   -q <FASTQ_DIR>       | Path to directory containining the input .fastq files
   -c <PREFIX_CHR>      | Prefix of the chromosome names (to keep only chr in the reference and delete scaffolds)
   -n <VIRUS_NAME>      | Name of the virus sequence used in reference for the target
   -i <SAMPLE_PREFIX>   | Sample prefix for output files
 ```
-Input files in **X folder**:
-- reference genome in fasta
-- ERV annotation in bed
-- Virus reference sequences in fasta (with primers)
-- fastq files after bowtie2 mapping + filtering
 
-Outputs in ```REF_DIR```  (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
-- ```${REF%.fa}_noscaffold_masked.fa``` : Masked reference genome without scaffolds
-- ```${REF%.fa}_masked_${a}_withprimer.fa``` : Masked reference genome without scaffolds + LTR sequence 
-- ```${REF%.fa}_masked_${a}_withprimer.mmi``` : Indexed hybrid reference
+Input files :
+- ```ref/${REF}_noscaffold_masked.fa``` : Prepared reference genome in fasta
+- ```ref/${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```ref/${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
+- ```bowtie2/${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
 
-Outputs in ```OUT_DIR```:
-- ```barcode${i}_LTR${a}_mapped_${REF}_SUP.sam|bam|paf``` : minimap2 output file
-- ```barcode${i}_LTR${a}_mapped_${REF}_sorted_SUP.bam```
+Outputs in ```mapping/```:
+- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_sorted_SUP.bam``` : minimap2 output file in bam
+- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf
+ 
 
 ## 6- Integration sites extraction
-After the mapping, the goal is identify the different integration sites using reads at the junction between LTR sequences and host genome. The main steps are:
-- Keep reads that mapped on the host genome and on the LTR sequences
+After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. The main steps are:
+- Keep reads mapped on the host genome and on the LTR sequences
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
 - Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
 - Remove PCR duplicates according to the IS, ShS and UMI groups
@@ -146,37 +151,58 @@ All these steps can be performed using ```run_IS.sh``` script that will call dif
 
 **Usage**
 ```sh
-./run_IS.sh <sample_name> <R_package_path> <out_path> <input_paf_path> <input_UMI_path> <assembly> <targetName_LTR5> \
-    <lengthTarget_LTR5> <targetName_LTR3> <lengthTarget_LTR3> <maxgapIS> <mapq_val> <nb_read_per_umi> <maxgapShS> <mms> <threshold_raw> <win_merge>
+./run_IS.sh -i SAMPLE_NAME -r R_PACKAGE_PATH -o OUT_PATH -p INPUT_PAF_PATH -u INPUT_UMI_PATH -a ASSEMBLY \
+          -5 TNAME_LTR5 -L LENGTH_LTR5 -3 TNAME_LTR3 -l LENGTH_LTR3 \
+          -g MAXGAP_IS -q MAPQ -n NB_READ_PER_UMI -s MAXGAP_SHS -m MMS -t THRESHOLD_RAW -w WIN_MERGE
 
 Options:
-  <sample_name>         | Name of the sample (ex: barcode01)
-  <R_package_path>      | Path to directory of the different R functions (ex: ~/script/Rpackages/)
-  <out_path>            | Path to directory for output files (ex: ~/results/R_clonality/)
-  <input_paf_path>      | Path to directory of the paf input files obtained after the step 5 (ex: ~/results/mapping/paf/)
-  <input_UMI_path>      | Path to directory of the UMI input files obtained after the step 4 (ex: ~/results/extract_UMI/)
-  <assembly>            | Name of the reference assembly
-  <targetName_LTR5>     | Name of the LTR5 virus sequence (used for the mapping)
-  <lengthTarget_LTR5>   | Total length of the LTR5 sequence
-  <targetName_LTR3>     | Name of the LTR3 virus sequence (used for the mapping)
-  <lengthTarget_LTR3>   | Total length of the LTR3 sequence
-  <maxgapIS>            | Maximal distance between IS to merge
-  <mapq_val>            | Minimum quality of mapping
-  <nb_read_per_umi>     | Minimum number of reads to conserve a UMI group
-  <maxgapShS>           | Maximal distance between ShS to merge
-  <mms>                 | Maximum number of mismatchs to regroup UMI in a group
-  <threshold_raw>       | Minimum number of raw reads by IS to keep it
-  <win_merge>           | Maximal distance between LTR5 and LTR3 IS to merge
+  -i <SAMPLE_NAME>         | Name of the sample (ex: barcode01)
+  -r <R_PACKAGE_PATH>      | Path to directory of the different R functions (ex: ~/script/Rpackages/)
+  -o <OUT_PATH>            | Path to directory for output files (ex: ~/results/R_clonality/)
+  -p <INPUT_PAF_PATH>      | Path to directory of the paf input files obtained after the step 5 (ex: ~/results/mapping/paf/)
+  -u <INPUT_UMI_PATH>      | Path to directory of the UMI input files obtained after the step 4 (ex: ~/results/extract_UMI/)
+  -a <ASSEMBLY>            | Name of the reference genome assembly
+
+  -5 <TNAME_LTR5>          | Name of the LTR5 virus sequence (used for the minimap2 mapping)
+  -L <LENGTH_LTR5>         | Total length of the LTR5 sequence (with primers)
+  -3 <TNAME_LTR3>          | Name of the LTR3 virus sequence (used for the minimap2 mapping)
+  -l <LENGTH_LTR3>         | Total length of the LTR3 sequence (with primers)
+
+  -g <MAXGAP_IS>           | Maximal distance between IS to merge
+  -q <MAPQ>                | Minimum quality of mapping
+  -n <NB_READ_PER_UMI>     | Minimum number of reads to conserve a UMI group
+  -s <MAXGAP_SHS>          | Maximal distance between ShS to merge
+  -m <MMS>                 | Maximum number of mismatchs to regroup UMI in a group
+  -t <THRESHOLD_RAW>       | Minimum number of raw reads by IS to keep it
+  -w <WIN_MERGE>           | Maximal distance between LTR5 and LTR3 IS to merge
 ```
 
-Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3RU5)):
+Input files :
+- ```mapping/${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : Mapped and filtered reads from minimap2
+- ```extract_umi/${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : Read sequences with identified UMi sequences in the read names
+
+Outputs in ```Rclonality/``` :
 - ```*merged*``` : Each reads with all their info + attributed UMI group
 - ```*positionreads*``` : Each reads with all their info + UMI, ShS and IS group
 - ```*countedreadsLTR3|LTR5*``` : Grouped IS with coordinates and nb of reads
 - ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
-- ```*clonalityResults*.txt``` : Final IS results with clonality %
+- **```*clonalityResults*.txt``` : Final IS results with clonality %**
 
 **Add info about test dataset and scripts + parameters file + VM parameters**
+Need sequences of the linker and LTR with primers 
+
+The next steps can be performed all together in the same folder. For easy use create the following folders :
+- ```ref/``` containing the host reference genome and virus reference sequences (with and without primers)
+      - ```host_reference_genome.fa```
+      - ```${VIRUS_NAME}_startU3.fa``` + ```${VIRUS_NAME}_startU3_withprimers.fa``` (LTR5)
+      - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
+      - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
+- ```data/``` containing the fastq files after demultiplexing 
+- ```results/``` containing the different folders for the output of the pipeline
+      - ```bowtie2/```
+      - ```extract_umi/```
+      - ```mapping/```
+      - ```Rclonality/```
 ___
 ## Correspondance
 Benjamin Riocreux-Verney,
