@@ -106,11 +106,13 @@ The steps includes :
 - Map the filtered reads on the hybrid genome using minimap2
 
 The first step is to prepare the host reference genome (masking + delete scaffold if wanted):
-```####Mask the reference genome using ERV/TE annotation
+```sh
+####Mask the reference genome using ERV/TE annotation
 bedtools maskfasta -fi reference_genome.fa -bed TE_annotation.bed -fo ref_masked.fa
 ####Using the prefix of the chromosomes, delete the scaffolds from the reference
 prefix_chr="NC"
-awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' ref_masked.fa > ref_noscaffold_masked.fa```
+awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' ref_masked.fa > ref_noscaffold_masked.fa
+```
 
 The mapping can then be performed using the ```mapping.sh``` script.
 
