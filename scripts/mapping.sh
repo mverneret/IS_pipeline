@@ -5,14 +5,13 @@ set -euo pipefail
 # Help function
 #######################
 show_help() {
-    echo "Usage: $0 -r REF_DIR -f REF_NAME -o OUT_DIR -q FASTQ_DIR -c PREFIX_CHR -n VIRUS_NAME -i SAMPLE_PREFIX"
+    echo "Usage: $0 -r REF_DIR -f REF_NAME -o OUT_DIR -q FASTQ_DIR -n VIRUS_NAME -i SAMPLE_PREFIX"
     echo ""
     echo "Arguments:"
     echo "  -r  Reference directory"
     echo "  -f  Reference host genome FASTA file name"
     echo "  -o  Output directory"
     echo "  -q  Directory containing FASTQ files"
-    echo "  -c  Prefix of chromosomes to keep"
     echo "  -n  Virus reference name (for LTR files)"
     echo "  -i  Sample prefix for output files"
     echo "  -h  Show this help message"
@@ -21,13 +20,12 @@ show_help() {
 #######################
 # Parse arguments
 #######################
-while getopts "r:f:o:q:c:n:i:h" opt; do
+while getopts "r:f:o:q:n:i:h" opt; do
     case $opt in
         r) REF_DIR="$OPTARG" ;;
         f) REF_NAME="$OPTARG" ;;
         o) OUT_DIR="$OPTARG" ;;
         q) FASTQ_DIR="$OPTARG" ;;
-        c) PREFIX_CHR="$OPTARG" ;;
         n) VIRUS_NAME="$OPTARG" ;;
         i) SAMPLE_PREFIX="$OPTARG" ;;
         h) show_help; exit 0 ;;
@@ -36,7 +34,7 @@ while getopts "r:f:o:q:c:n:i:h" opt; do
 done
 
 # Check required arguments
-if [[ -z "${REF_DIR:-}" || -z "${REF_NAME:-}" || -z "${OUT_DIR:-}" || -z "${FASTQ_DIR:-}" || -z "${PREFIX_CHR:-}" || -z "${VIRUS_NAME:-}" || -z "${SAMPLE_PREFIX:-}" ]]; then
+if [[ -z "${REF_DIR:-}" || -z "${REF_NAME:-}" || -z "${OUT_DIR:-}" || -z "${FASTQ_DIR:-}" || -z "${VIRUS_NAME:-}" || -z "${SAMPLE_PREFIX:-}" ]]; then
     echo "Error: Missing required arguments"
     show_help
     exit 1
