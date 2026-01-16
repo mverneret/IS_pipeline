@@ -127,14 +127,13 @@ The mapping can then be performed using the ```mapping.sh``` script.
 
 **Usage**
 ```sh
-./mapping.sh -r <string> -f <string> -o <string> -q <string> -c <string> -n <string> -i <string>
+./mapping.sh -r <string> -f <string> -o <string> -q <string> -n <string> -i <string>
 
 Options:
   -r <REF_DIR>         | Path to directory of the reference files
   -f <REF_NAME>        | Name of the reference genome file in .fasta
   -o <OUT_DIR>         | Path to directory for output files
   -q <FASTQ_DIR>       | Path to directory containining the input .fastq files
-  -c <PREFIX_CHR>      | Prefix of the chromosome names (to keep only chr in the reference and delete scaffolds)
   -n <VIRUS_NAME>      | Name of the virus sequence used in reference for the target
   -i <SAMPLE_PREFIX>   | Sample prefix for output files
 ```
