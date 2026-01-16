@@ -96,7 +96,7 @@ Input files in ```bowtie2/```:
 Outputs in ```extract_umi/``` for each LTR${a} with a in {3,5}::
 - ```${SAMPLE_NAME}_LTR${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
 - ```${SAMPLE_NAME}_LTR${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
-- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
+- **```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names**
   
 ## 5- Mapping
 The filtered reads are then mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
