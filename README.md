@@ -79,7 +79,7 @@ Briefly this script is based on the specific structure of the UMIs integrated in
 - ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward reads
 - ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reversed reads
 
-The workflow to extract the reads is composed of different steps :
+The workflow to extract the UMI from the reads is composed of different steps :
 - Define UMI structure based on the LTR (different inputs for LTR5 or 3) 
 - As the UMI are located in the adapter at the extremity of the reads, extract the begining or end of the reads (length of the adapter) depending on the strand (+/-) and LTR (5 or 3).
 - Align the sequence of the adapter to the UMI pattern (using semi-global alignment)
