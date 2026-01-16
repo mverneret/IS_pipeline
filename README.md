@@ -13,10 +13,10 @@ ___
 - Nanofilt
 - samtools (1.16.1)
 - bedtools (v2.30.0)
-- python (3.10.14)
-- minimap2 (2.26-r1175)
+- python (3.10.14) + edlib, pysam, tqdm, pandas, biopython
+- minimap2 (2.26-r1175) + paftools.js
 - seqkt (1.5-r133)
-- R (> 4.3.1) **Add R packages**
+- R (> 4.3.1) + GenomicRanges, Rsamtools, changepoint, tidyverse, GenomicAlignments, stringdist
 
 ## 1- Basecalling
 Basecalling was performed on the files generated from the different sequencing runs using the Dorado basecaller using super accurate basecalling with GPU acceleration, converting .fast5 to .bam formats.
@@ -176,7 +176,7 @@ Outputs in ```out_path``` (i = barcode number; a= LTR5 (startU3) or LTR3 (endU3R
 - ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
 - ```*clonalityResults*.txt``` : Final IS results with clonality %
 
-**Add info about test dataset and scripts + parameters file**
+**Add info about test dataset and scripts + parameters file + VM parameters**
 ___
 ## Correspondance
 Benjamin Riocreux-Verney,
