@@ -190,6 +190,7 @@ Outputs in ```Rclonality/``` :
 - ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
 - **```*clonalityResults*.txt``` : Final IS results with clonality %**
 
+## Test dataset and reads simulation
 **Add info about test dataset and scripts + parameters file + VM parameters**
 Need sequences of the linker and LTR with primers 
 
