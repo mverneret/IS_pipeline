@@ -137,7 +137,7 @@ Input files :
 
 Outputs in ```mapping/```:
 - ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_sorted_SUP.bam``` : minimap2 output file in bam
-- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf
+- **```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf**
  
 
 ## 6- Integration sites extraction
