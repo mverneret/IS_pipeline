@@ -75,7 +75,7 @@ Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
 We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
-Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. These UMI are 16bp long and composed as :
+Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. These UMI are 16bp long and composed as bellow :
 - ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward reads
 - ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reversed reads
 
@@ -200,21 +200,27 @@ Outputs in ```Rclonality/``` :
 - **```*clonalityResults*.txt``` : Final IS results with clonality %**
 
 ## Test dataset and reads simulation
-**Add info about test dataset and scripts + parameters file + VM parameters**
-Need sequences of the linker and LTR with primers 
+To test the pipeline (basecalling and demultiplexing steps are not included), test files and command lines are available in the ```test_file/``` folder. 
+These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. 
 
-The next steps can be performed all together in the same folder. For easy use create the following folders :
-- ```ref/``` containing the host reference genome and virus reference sequences (with and without primers)
-      - ```host_reference_genome.fa```
-      - ```${VIRUS_NAME}_startU3.fa``` + ```${VIRUS_NAME}_startU3_withprimers.fa``` (LTR5)
-      - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
-      - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
-- ```data/``` containing the fastq files after demultiplexing 
-- ```results/``` containing the different folders for the output of the pipeline
-      - ```bowtie2/```
-      - ```extract_umi/```
-      - ```mapping/```
-      - ```Rclonality/```
+**Add read simulation principle**
+
+The rest of the pipeline was executed as for real samples.
+
+The arborescence of the folders was build as bellow:
+- ```scripts``` : includes all the necessary scripts to run the pipeline (```scripts``` folder of this repo + ```IS_simulation/scripts``` for the read simulation)
+- ```ref/``` : the host genome and virus reference sequences (with and without primers)
+      - ```ARS12_reference_genome.fa```
+      - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` (LTR5)
+      - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` (LTR3)
+      - ```3824_provirus_wo_LTR.fa``` (INT)
+      - ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences to simulate the reads
+- Different folders for the outputs of the pipeline
+      - ```sim/``` : results of the IS and reads simulation (reads fastq files)
+      - ```bowtie2/``` : results of the 3-Filtering steps
+      - ```extract_umi/```: results of the 4-Extract UMI
+      - ```mapping/``` : results of the 5-Mapping
+      - ```Rclonality/``` : results of the 6-Integration sites extraction
 ___
 ## Correspondance
 Benjamin Riocreux-Verney,
