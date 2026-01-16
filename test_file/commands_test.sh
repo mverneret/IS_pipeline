@@ -64,7 +64,6 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/mapping.sh \
   -f ARS12_noscaffold_masked.fa \
   -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/mapping \
   -q /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
-  -c NC \
   -n 3824 \
   -i random_IS_CH_1k \
   > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_mapping.log 2>&1
