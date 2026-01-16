@@ -75,7 +75,16 @@ Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
 We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
-Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. **Add more details on the extraction of the UMI and on the UMI structure**
+Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. These UMI are 16bp long and composed as :
+- ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward reads
+- ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reversed reads
+
+The workflow to extract the reads is composed of different steps :
+- Define UMI structure based on the LTR (different inputs for LTR5 or 3) 
+- As the UMI are located in the adapter at the extremity of the reads, extract the begining or end of the reads (length of the adapter) depending on the strand (+/-) and LTR (5 or 3).
+- Align the sequence of the adapter to the UMI pattern (using semi-global alignment)
+- Identify UMI in adapter sequences allowing --max-error mismatchs/indels
+- Write in the fasta output headers including read_ID, strand, distance from UMI pattern and UMI sequence
 
 The UMI extraction can be performed using the ```extract_umi.sh``` script.
 
