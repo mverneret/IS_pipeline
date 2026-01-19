@@ -1,47 +1,20 @@
-####### VM and tools install #######
-sudo apt update
-sudo apt install r-base r-base-dev
-sudo apt install python3-edlib python3-pysam python3-tqdm python3-pandas python3-biopython
-sudo apt install samtools bedtools seqtk bowtie2 nanofilt
-#install minimap2 and paftools.js
-git clone https://github.com/lh3/minimap2
-cd minimap2 && make
-curl -L https://github.com/attractivechaos/k8/releases/download/v0.2.4/k8-0.2.4.tar.bz2 | tar -jxf -
-cp k8-0.2.4/k8-`uname -s` k8  
-#install R packages
-sudo apt install libbz2-dev liblzma-dev zlib1g-dev
-#in R
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("GenomicRanges")
-BiocManager::install("Rsamtools")
-install.packages("changepoint")
-install.packages("tidyverse")
-BiocManager::install("GenomicAlignments")
-BiocManager::install("stringdist")
-
-git clone
-
-####### Mask and filter out scaffolds from the host reference genome #######
-bedtools maskfasta -fi GCF_001704415.2.fa -bed CH_annotation_II-5_ARS1.2.bed -fo GCF_001704415.2_masked.fa
-prefix_chr="NC"
-awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
+#!/bin/bash
 
 ####### Simulate IS and reads #######
-bash /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
-  -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref/ARS12_noscaffold_masked.fa \
+bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
+  -r ${WORKDIR}/ref/ARS12_noscaffold_masked.fa \
   -n 1000 \
   -f 260 \
-  -l /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/data/seq_LTR_linker_CH.fasta \
+  -l ${WORKDIR}/ref/seq_LTR_linker_CH.fasta \
   -d random_IS_CH_1k \
-  -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/sim \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k.log 2>&1
-
+  -o ${WORKDIR}/test_IS/sim \
+  > ${WORKDIR}/test_IS/random_IS_CH_1k.log 2>&1
+  
 ####### Align the random reads on LTR sequences and separate LTR5 and LTR3 #######
-bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/filter_reads.sh \
-  -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref \
-  -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
-  -f /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/sim/random_IS_CH_1k_reads.fq \
+bash ${WORKDIR}/IS_pipelinev1/scripts/filter_reads.sh \
+  -r ${WORKDIR}/ref \
+  -o ${WORKDIR}/test_IS/bowtie2 \
+  -f ${WORKDIR}/test_IS/sim/random_IS_CH_1k_reads.fq \
   -i random_IS_CH_1k \
   -n 3824 \
   -q 20 \
@@ -49,34 +22,34 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/filter_reads.sh \
   -a 57 \
   -l 63 \
   -m 188 \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_bowtie2.log 2>&1
+  > ${WORKDIR}/test_IS/random_IS_CH_1k_bowtie2.log 2>&1
 
 ####### Extract UMIs from the mapped reads #######
-bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/extract_umi.sh \
-  -s /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
-  -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/extract_UMI \
+bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
+  -s ${WORKDIR}/test_IS/bowtie2 \
+  -o ${WORKDIR}/test_IS/extract_UMI \
   -a 57 \
   -e 0 \
   -i random_IS_CH_1k \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_extract_umi.log 2>&1
+  > ${WORKDIR}/test_IS/random_IS_CH_1k_extract_umi.log 2>&1
 
 ####### Mapping of the reads on the virus + host ref genomes #######
-bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/mapping.sh \
-  -r /home/ubuntu/data/mydatalocal/IS_pipeline/test/ref \
+bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
+  -r ${WORKDIR}/ref \
   -f ARS12_noscaffold_masked.fa \
-  -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/mapping \
-  -q /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/bowtie2 \
+  -o ${WORKDIR}/test_IS/mapping \
+  -q ${WORKDIR}/test_IS/bowtie2 \
   -n 3824 \
   -i random_IS_CH_1k \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_mapping.log 2>&1
+  > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1>&1
 
 ####### Identify integration sites #######
-bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/run_IS.sh \
+bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -i random_IS_CH_1k \
-  -r /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/Rpackage/ \
-  -o /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/R_clonality/ \
-  -p /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/mapping/paf/ \
-  -u /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/extract_UMI/ \
+  -r ${WORKDIR}/IS_pipeline/scripts/R/Rpackage/ \
+  -o ${WORKDIR}/test_IS/R_clonality/ \
+  -p ${WORKDIR}/test_IS/mapping/paf/ \
+  -u ${WORKDIR}/test_IS/extract_UMI/ \
   -a "ARS12_noscaffold_masked.fa" \
   -5 "3824_startU3" \
   -L 63 \
@@ -89,4 +62,4 @@ bash /home/ubuntu/data/mydatalocal/IS_pipeline/scripts/R/run_IS.sh \
   -m 2 \
   -t 1 \
   -w 25 \
-  > /home/ubuntu/data/mydatalocal/IS_pipeline/IS_simulation/random_IS_CH_1k_IS.log 2>&1
+  > ${WORKDIR}/test_IS/random_IS_CH_1k_IS.log 2>&1
