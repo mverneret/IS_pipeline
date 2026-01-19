@@ -23,9 +23,7 @@ while getopts "s:o:a:e:i:h" opt; do
     esac
 done
 
-#######################
 # Check required arguments
-#######################
 if [[ -z "${DATA_SAM:-}" || -z "${DIR_UMI:-}" || -z "${ADAPTER_LENGTH:-}" || -z "${MAX_ERROR:-}" || -z "${SAMPLE_PREFIX:-}" ]]; then
     echo "Error: Missing required arguments"
     show_help
@@ -35,17 +33,12 @@ fi
 mkdir -p "$DIR_UMI"
 
 #######################
-# Script directory
-#######################
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-#######################
 # 1. Separate reads by LTR and orientation
 #######################
 for a in "endU3RU5" "startU3"; do
     if [[ $a == "endU3RU5" ]]; then
         LTR="LTR3"
-    else
+    elif [[ $a == "startU3" ]]; then
         LTR="LTR5"
     fi
 
@@ -53,7 +46,7 @@ for a in "endU3RU5" "startU3"; do
     REVERSE_OUT="${DIR_UMI}/${SAMPLE_PREFIX}_${LTR}_SUP_rev.fasta"
 
     echo "Processing $LTR reads (forward and reverse)..."
-
+    
     samtools view -F 20 "${DATA_SAM}/${SAMPLE_PREFIX}_mapping_${a}_SUP.sam" \
         | grep -v '^@' \
         | awk '{print ">" $1 "\n" $10}' > "$FORWARD_OUT"
@@ -66,6 +59,8 @@ done
 #######################
 # 2. Run UMI extraction
 #######################
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 for LTR_NUM in 3 5; do
     FWD_FILE="${DIR_UMI}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_SUP_fwd.fasta"
     REV_FILE="${DIR_UMI}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_SUP_rev.fasta"
@@ -81,15 +76,9 @@ for LTR_NUM in 3 5; do
 done
 
 #######################
-# Cleanup
+# 3. Cleanup intermediate files
 #######################
-rm -f \
-    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_SUP_fwd.fasta" \
-    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_SUP_rev.fasta" \
-    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_SUP_fwd.fasta" \
-    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_SUP_rev.fasta"
+echo "####### Cleaning up intermediate files..."
+find "$DIR_UMI" -type f ! -name "*_UMI.fasta" -delete
 
-echo "DONE"
-echo "Final outputs:"
-echo "  ${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_UMI.fasta"
-echo "  ${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_UMI.fasta"
+echo "####### DONE - $SAMPLE_PREFIX"
