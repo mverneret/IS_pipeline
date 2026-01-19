@@ -1,3 +1,26 @@
+# Test dataset and reads simulation
+To test the pipeline (basecalling and demultiplexing steps are not included), test files and command lines are available in the ```test_file/``` folder. 
+These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. 
+
+**Add read simulation principle**
+
+The rest of the pipeline was executed as for real samples.
+
+The arborescence of the folders was build as bellow:
+- ```scripts``` : includes all the necessary scripts to run the pipeline (```scripts``` folder of this repo + ```IS_simulation/scripts``` for the read simulation)
+- ```ref/``` : the host genome and virus reference sequences (with and without primers)
+    - ```ARS12_reference_genome.fa```
+    - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` (LTR5)
+    - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` (LTR3)
+    - ```3824_provirus_wo_LTR.fa``` (INT)
+    - ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences to simulate the reads
+- Different folders for the outputs of the pipeline
+    - ```sim/``` : results of the IS and reads simulation (reads fastq files)
+    - ```bowtie2/``` : results of the 3-Filtering steps
+    - ```extract_umi/```: results of the 4-Extract UMI
+    - ```mapping/``` : results of the 5-Mapping
+    - ```Rclonality/``` : results of the 6-Integration sites extraction
+
 ####### VM and tools install #######
 sudo apt update
 sudo apt install r-base r-base-dev
