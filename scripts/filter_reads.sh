@@ -1,6 +1,4 @@
 #!/bin/bash
-
-# Exit on error
 set -euo pipefail
 
 #######################
@@ -8,19 +6,6 @@ set -euo pipefail
 #######################
 show_help() {
   echo "Usage: $0 -r REF_DIR -o OUT_DIR -f FASTQ_FILE -n REF_NAME -i SAMPLE_NAME -q MIN_QUALITY -g LENGTH_GENOME -a LENGTH_ADAPTOR -l LENGTH_LTR5 -m LENGTH_LTR3"
-  echo ""
-  echo "Arguments:"
-  echo "  -r  Path to reference directory"
-  echo "  -o  Output directory"
-  echo "  -f  Path to FASTQ file"
-  echo "  -n  Reference name (used for fasta and index names)"
-  echo "  -i  Sample name (used for output files)"
-  echo "  -q  Minimum quality for NanoFilt"
-  echo "  -g  Min genome length in the reads"
-  echo "  -a  Adaptor length"
-  echo "  -l  LTR5 length in the reads (with primers)"
-  echo "  -m  LTR3 length in the reads (with primers)"
-  echo "  -h  Show this help message"
 }
 
 #######################
@@ -43,7 +28,9 @@ while getopts "r:o:f:n:i:q:g:a:l:m:h" opt; do
   esac
 done
 
+#######################
 # Check required args
+#######################
 if [[ -z "${REF_DIR:-}" || -z "${OUT_DIR:-}" || -z "${FASTQ_FILE:-}" || -z "${REF_NAME:-}" || -z "${SAMPLE_NAME:-}" || -z "${MIN_QUALITY:-}" || -z "${LENGTH_GENOME:-}" || -z "${LENGTH_ADAPTOR:-}" || -z "${LENGTH_LTR5:-}" || -z "${LENGTH_LTR3:-}" ]]; then
   echo "Error: Missing required arguments"
   show_help
@@ -55,77 +42,96 @@ mkdir -p "$OUT_DIR"
 #######################
 # 0. Build reference indexes if missing
 #######################
-echo "####### 0. Index LTR and provirus references"
-
 for ref in "endU3RU5" "startU3" "provirus_wo_LTR"; do
-  INDEX="${REF_DIR}/${REF_NAME}_${ref}_index.1.bt2"
   FASTA="${REF_DIR}/${REF_NAME}_${ref}.fasta"
-  if [ ! -f "$INDEX" ]; then
-    echo "Index for ${FASTA} does not exist. Building index..."
+  INDEX="${FASTA%.fasta}_index.1.bt2"
+  if [[ ! -f "$INDEX" ]]; then
     bowtie2-build "$FASTA" "${FASTA%.fasta}_index"
-  else
-    echo "Index for ${FASTA} already exists. Skipping."
   fi
 done
 
 #######################
-# 1. Filter read quality
+# 1. Filter read quality 
 #######################
-echo "####### 1. Filter read quality - ${SAMPLE_NAME}"
-FILTERED_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_Q${MIN_QUALITY}.fastq"
+FILTERED_FASTQ="$(mktemp)"
 NanoFilt -q "$MIN_QUALITY" "$FASTQ_FILE" > "$FILTERED_FASTQ"
 
 #######################
-# 2. Mapping reads on LTRs
+# 2. Mapping reads on LTRs (FINAL SAMs)
 #######################
-echo "####### 2. Mapping reads on LTRs - ${SAMPLE_NAME}"
-
-# LTR3 (endU3RU5)
-echo "####### Mapping on LTR3"
-SAM_END="${OUT_DIR}/${SAMPLE_NAME}_mapping_endU3RU5_SUP.sam"
-bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_endU3RU5_index" -U "$FILTERED_FASTQ" -S "$SAM_END" -N 1
-samtools view -h -F 4 "$SAM_END" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.sam"
-samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.fastq"
-
-# LTR5 (startU3)
-echo "####### Mapping on LTR5"
-SAM_START="${OUT_DIR}/${SAMPLE_NAME}_mapping_startU3_SUP.sam"
-bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_startU3_index" -U "$FILTERED_FASTQ" -S "$SAM_START" -N 1
-samtools view -h -F 4 "$SAM_START" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.sam"
-samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.fastq"
-
-#######################
-# 3. Mapping reads on provirus without LTR
-#######################
-echo "####### 3. Mapping reads on provirus without LTR - ${SAMPLE_NAME}"
 
 # LTR3
-SAM_PRO_END="${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
-bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
-  -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.fastq" -S "$SAM_PRO_END" -N 1
-samtools view -h -f 4 "$SAM_PRO_END" > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_SUP.sam"
+SAM_LTR3="${OUT_DIR}/${SAMPLE_NAME}_mapping_LTR3_SUP.sam"
+bowtie2 --sensitive-local \
+  -x "${REF_DIR}/${REF_NAME}_endU3RU5_index" \
+  -U "$FILTERED_FASTQ" \
+  -S "$SAM_LTR3" -N 1
+
+samtools view -h -F 4 "$SAM_LTR3" > "$(mktemp)" && mv "$(mktemp)" "$SAM_LTR3"
 
 # LTR5
-SAM_PRO_START="${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
-bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
-  -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.fastq" -S "$SAM_PRO_START" -N 1
-samtools view -h -f 4 "$SAM_PRO_START" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_SUP.sam"
+SAM_LTR5="${OUT_DIR}/${SAMPLE_NAME}_mapping_LTR5_SUP.sam"
+bowtie2 --sensitive-local \
+  -x "${REF_DIR}/${REF_NAME}_startU3_index" \
+  -U "$FILTERED_FASTQ" \
+  -S "$SAM_LTR5" -N 1
+
+samtools view -h -F 4 "$SAM_LTR5" > "$(mktemp)" && mv "$(mktemp)" "$SAM_LTR5"
 
 #######################
-# 4. Filter read size
+# 3. Mapping on provirus
 #######################
-echo "####### 4. Filter read size - ${SAMPLE_NAME}"
+TMP_LTR3_FASTQ="$(mktemp)"
+TMP_LTR5_FASTQ="$(mktemp)"
+
+samtools fastq "$SAM_LTR3" > "$TMP_LTR3_FASTQ"
+samtools fastq "$SAM_LTR5" > "$TMP_LTR5_FASTQ"
+
+TMP_LTR3_SAM="$(mktemp)"
+TMP_LTR5_SAM="$(mktemp)"
+
+bowtie2 --sensitive-local \
+  -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
+  -U "$TMP_LTR3_FASTQ" \
+  -S "$TMP_LTR3_SAM" -N 1
+
+bowtie2 --sensitive-local \
+  -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
+  -U "$TMP_LTR5_FASTQ" \
+  -S "$TMP_LTR5_SAM" -N 1
+
+#######################
+# 4. Filter read size (FINAL FASTQs)
+#######################
 
 # LTR3
 MIN_LEN_LTR3=$((LENGTH_GENOME + LENGTH_ADAPTOR + LENGTH_LTR3))
-awk -v min_len="$MIN_LEN_LTR3" 'length($10) >= min_len || $1 ~ /^@/' "${OUT_DIR}/${SAMPLE_NAME}_LTR3_SUP.sam" \
-  > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.sam"
-samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq"
+OUT_LTR3_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq"
+
+awk -v min_len="$MIN_LEN_LTR3" 'length($10) >= min_len || $1 ~ /^@/' "$TMP_LTR3_SAM" \
+  | samtools fastq - > "$OUT_LTR3_FASTQ"
 
 # LTR5
 MIN_LEN_LTR5=$((LENGTH_GENOME + LENGTH_ADAPTOR + LENGTH_LTR5))
-awk -v min_len="$MIN_LEN_LTR5" 'length($10) >= min_len || $1 ~ /^@/' "${OUT_DIR}/${SAMPLE_NAME}_LTR5_SUP.sam" \
-  > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.sam"
-samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq"
+OUT_LTR5_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq"
 
-echo "####### DONE - ${SAMPLE_NAME}"
+awk -v min_len="$MIN_LEN_LTR5" 'length($10) >= min_len || $1 ~ /^@/' "$TMP_LTR5_SAM" \
+  | samtools fastq - > "$OUT_LTR5_FASTQ"
+
+#######################
+# Cleanup
+#######################
+rm -f \
+  "$FILTERED_FASTQ" \
+  "$TMP_LTR3_FASTQ" \
+  "$TMP_LTR5_FASTQ" \
+  "$TMP_LTR3_SAM" \
+  "$TMP_LTR5_SAM"
+
+echo "DONE"
+echo "Final outputs:"
+echo "  $SAM_LTR3"
+echo "  $SAM_LTR5"
+echo "  $OUT_LTR3_FASTQ"
+echo "  $OUT_LTR5_FASTQ"
+
