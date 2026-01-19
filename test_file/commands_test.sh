@@ -11,7 +11,7 @@ bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   > ${WORKDIR}/test_IS/random_IS_CH_1k.log 2>&1
   
 ####### Align the random reads on LTR sequences and separate LTR5 and LTR3 #######
-bash ${WORKDIR}/IS_pipelinev1/scripts/filter_reads.sh \
+bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -r ${WORKDIR}/ref \
   -o ${WORKDIR}/test_IS/bowtie2 \
   -f ${WORKDIR}/test_IS/sim/random_IS_CH_1k_reads.fq \
@@ -41,7 +41,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -q ${WORKDIR}/test_IS/bowtie2 \
   -n 3824 \
   -i random_IS_CH_1k \
-  > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1>&1
+  > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1
 
 ####### Identify integration sites #######
 bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
