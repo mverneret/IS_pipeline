@@ -61,3 +61,5 @@ mkdir ${WORKDIR}/test_IS
 cd test_IS
 
 mkdir R_clonality bowtie2 extract_UMI mapping sim
+
+bash ${WORKDIR}/IS_pipeline/test_file/commands_test.sh
