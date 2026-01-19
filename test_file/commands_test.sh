@@ -20,6 +20,8 @@ install.packages("tidyverse")
 BiocManager::install("GenomicAlignments")
 BiocManager::install("stringdist")
 
+git clone
+
 ####### Mask and filter out scaffolds from the host reference genome #######
 bedtools maskfasta -fi GCF_001704415.2.fa -bed CH_annotation_II-5_ARS1.2.bed -fo GCF_001704415.2_masked.fa
 prefix_chr="NC"
