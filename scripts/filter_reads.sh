@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# Exit on error
 set -euo pipefail
 
 #######################
@@ -28,9 +30,7 @@ while getopts "r:o:f:n:i:q:g:a:l:m:h" opt; do
   esac
 done
 
-#######################
 # Check required args
-#######################
 if [[ -z "${REF_DIR:-}" || -z "${OUT_DIR:-}" || -z "${FASTQ_FILE:-}" || -z "${REF_NAME:-}" || -z "${SAMPLE_NAME:-}" || -z "${MIN_QUALITY:-}" || -z "${LENGTH_GENOME:-}" || -z "${LENGTH_ADAPTOR:-}" || -z "${LENGTH_LTR5:-}" || -z "${LENGTH_LTR3:-}" ]]; then
   echo "Error: Missing required arguments"
   show_help
@@ -42,96 +42,85 @@ mkdir -p "$OUT_DIR"
 #######################
 # 0. Build reference indexes if missing
 #######################
+echo "####### 0. Index LTR and provirus references"
 for ref in "endU3RU5" "startU3" "provirus_wo_LTR"; do
+  INDEX="${REF_DIR}/${REF_NAME}_${ref}_index.1.bt2"
   FASTA="${REF_DIR}/${REF_NAME}_${ref}.fasta"
-  INDEX="${FASTA%.fasta}_index.1.bt2"
-  if [[ ! -f "$INDEX" ]]; then
+  if [ ! -f "$INDEX" ]; then
+    echo "Index for ${FASTA} does not exist. Building index..."
     bowtie2-build "$FASTA" "${FASTA%.fasta}_index"
+  else
+    echo "Index for ${FASTA} already exists. Skipping."
   fi
 done
 
 #######################
-# 1. Filter read quality 
+# 1. Filter read quality
 #######################
-FILTERED_FASTQ="$(mktemp)"
+echo "####### 1. Filter read quality - ${SAMPLE_NAME}"
+FILTERED_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_Q${MIN_QUALITY}.fastq"
 NanoFilt -q "$MIN_QUALITY" "$FASTQ_FILE" > "$FILTERED_FASTQ"
 
 #######################
-# 2. Mapping reads on LTRs (FINAL SAMs)
+# 2. Mapping reads on LTRs
 #######################
+echo "####### 2. Mapping reads on LTRs - ${SAMPLE_NAME}"
 
-# LTR3
-SAM_LTR3="${OUT_DIR}/${SAMPLE_NAME}_mapping_LTR3_SUP.sam"
-bowtie2 --sensitive-local \
-  -x "${REF_DIR}/${REF_NAME}_endU3RU5_index" \
-  -U "$FILTERED_FASTQ" \
-  -S "$SAM_LTR3" -N 1
+# LTR3 (endU3RU5)
+echo "####### Mapping on LTR3"
+SAM_END="${OUT_DIR}/${SAMPLE_NAME}_mapping_endU3RU5_SUP.sam"
+bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_endU3RU5_index" -U "$FILTERED_FASTQ" -S "$SAM_END" -N 1
+samtools view -h -F 4 "$SAM_END" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.sam"
+samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.fastq"
 
-samtools view -h -F 4 "$SAM_LTR3" > "$(mktemp)" && mv "$(mktemp)" "$SAM_LTR3"
-
-# LTR5
-SAM_LTR5="${OUT_DIR}/${SAMPLE_NAME}_mapping_LTR5_SUP.sam"
-bowtie2 --sensitive-local \
-  -x "${REF_DIR}/${REF_NAME}_startU3_index" \
-  -U "$FILTERED_FASTQ" \
-  -S "$SAM_LTR5" -N 1
-
-samtools view -h -F 4 "$SAM_LTR5" > "$(mktemp)" && mv "$(mktemp)" "$SAM_LTR5"
+# LTR5 (startU3)
+echo "####### Mapping on LTR5"
+SAM_START="${OUT_DIR}/${SAMPLE_NAME}_mapping_startU3_SUP.sam"
+bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_startU3_index" -U "$FILTERED_FASTQ" -S "$SAM_START" -N 1
+samtools view -h -F 4 "$SAM_START" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.sam"
+samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.fastq"
 
 #######################
-# 3. Mapping on provirus
+# 3. Mapping reads on provirus without LTR
 #######################
-TMP_LTR3_FASTQ="$(mktemp)"
-TMP_LTR5_FASTQ="$(mktemp)"
+echo "####### 3. Mapping reads on provirus without LTR - ${SAMPLE_NAME}"
 
-samtools fastq "$SAM_LTR3" > "$TMP_LTR3_FASTQ"
-samtools fastq "$SAM_LTR5" > "$TMP_LTR5_FASTQ"
+SAM_PRO_END="${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
+bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
+  -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_SUP.fastq" -S "$SAM_PRO_END" -N 1
+samtools view -h -f 4 "$SAM_PRO_END" > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_SUP.sam"
 
-TMP_LTR3_SAM="$(mktemp)"
-TMP_LTR5_SAM="$(mktemp)"
-
-bowtie2 --sensitive-local \
-  -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
-  -U "$TMP_LTR3_FASTQ" \
-  -S "$TMP_LTR3_SAM" -N 1
-
-bowtie2 --sensitive-local \
-  -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
-  -U "$TMP_LTR5_FASTQ" \
-  -S "$TMP_LTR5_SAM" -N 1
+SAM_PRO_START="${OUT_DIR}/${SAMPLE_NAME}_mapped_endU3RU5_mapping_${REF_NAME}_provirus_wo_LTR_SUP.sam"
+bowtie2 --sensitive-local -x "${REF_DIR}/${REF_NAME}_provirus_wo_LTR_index" \
+  -U "${OUT_DIR}/${SAMPLE_NAME}_mapped_startU3_SUP.fastq" -S "$SAM_PRO_START" -N 1
+samtools view -h -f 4 "$SAM_PRO_START" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_SUP.sam"
 
 #######################
-# 4. Filter read size (FINAL FASTQs)
+# 4. Filter read size
 #######################
+echo "####### 4. Filter read size - ${SAMPLE_NAME}"
 
-# LTR3
 MIN_LEN_LTR3=$((LENGTH_GENOME + LENGTH_ADAPTOR + LENGTH_LTR3))
-OUT_LTR3_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq"
+awk -v min_len="$MIN_LEN_LTR3" 'length($10) >= min_len || $1 ~ /^@/' "${OUT_DIR}/${SAMPLE_NAME}_LTR3_SUP.sam" \
+  > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.sam"
+samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq"
 
-awk -v min_len="$MIN_LEN_LTR3" 'length($10) >= min_len || $1 ~ /^@/' "$TMP_LTR3_SAM" \
-  | samtools fastq - > "$OUT_LTR3_FASTQ"
-
-# LTR5
 MIN_LEN_LTR5=$((LENGTH_GENOME + LENGTH_ADAPTOR + LENGTH_LTR5))
-OUT_LTR5_FASTQ="${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq"
-
-awk -v min_len="$MIN_LEN_LTR5" 'length($10) >= min_len || $1 ~ /^@/' "$TMP_LTR5_SAM" \
-  | samtools fastq - > "$OUT_LTR5_FASTQ"
+awk -v min_len="$MIN_LEN_LTR5" 'length($10) >= min_len || $1 ~ /^@/' "${OUT_DIR}/${SAMPLE_NAME}_LTR5_SUP.sam" \
+  > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.sam"
+samtools fastq "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.sam" > "${OUT_DIR}/${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq"
 
 #######################
-# Cleanup
+# 5. Cleanup intermediate files
 #######################
-rm -f \
-  "$FILTERED_FASTQ" \
-  "$TMP_LTR3_FASTQ" \
-  "$TMP_LTR5_FASTQ" \
-  "$TMP_LTR3_SAM" \
-  "$TMP_LTR5_SAM"
+echo "####### Cleaning up intermediate files..."
 
-echo "DONE"
-echo "Final outputs:"
-echo "  $SAM_LTR3"
-echo "  $SAM_LTR5"
-echo "  $OUT_LTR3_FASTQ"
-echo "  $OUT_LTR5_FASTQ"
+# Keep only mapping SAMs and filtered FASTQ
+find "$OUT_DIR" -type f ! \( \
+  -name "${SAMPLE_NAME}_mapping_endU3RU5_SUP.sam" -o \
+  -name "${SAMPLE_NAME}_mapping_startU3_SUP.sam" -o \
+  -name "${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq" -o \
+  -name "${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq" \
+\) -delete
 
+echo "####### DONE - ${SAMPLE_NAME}"
