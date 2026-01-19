@@ -67,7 +67,7 @@ Input files :
   
 Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
-- ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering
+- ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Reads after all the steps + size filtering
 
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
