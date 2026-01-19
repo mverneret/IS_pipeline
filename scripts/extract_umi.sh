@@ -6,14 +6,6 @@ set -euo pipefail
 #######################
 show_help() {
     echo "Usage: $0 -s DATA_SAM -o DIR_UMI -a ADAPTER_LENGTH -e MAX_ERROR -i SAMPLE_PREFIX"
-    echo ""
-    echo "Arguments:"
-    echo "  -s  Path to the SAM file, directory containing *_mapping_*.sam files"
-    echo "  -o  Output directory for UMI fasta files"
-    echo "  -a  Adapter length"
-    echo "  -e  Maximum allowed error for UMI extraction"
-    echo "  -i  Sample prefix for output files"
-    echo "  -h  Show this help message"
 }
 
 #######################
@@ -31,7 +23,9 @@ while getopts "s:o:a:e:i:h" opt; do
     esac
 done
 
+#######################
 # Check required arguments
+#######################
 if [[ -z "${DATA_SAM:-}" || -z "${DIR_UMI:-}" || -z "${ADAPTER_LENGTH:-}" || -z "${MAX_ERROR:-}" || -z "${SAMPLE_PREFIX:-}" ]]; then
     echo "Error: Missing required arguments"
     show_help
@@ -41,12 +35,17 @@ fi
 mkdir -p "$DIR_UMI"
 
 #######################
+# Script directory
+#######################
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+#######################
 # 1. Separate reads by LTR and orientation
 #######################
 for a in "endU3RU5" "startU3"; do
     if [[ $a == "endU3RU5" ]]; then
         LTR="LTR3"
-    elif [[ $a == "startU3" ]]; then
+    else
         LTR="LTR5"
     fi
 
@@ -54,7 +53,7 @@ for a in "endU3RU5" "startU3"; do
     REVERSE_OUT="${DIR_UMI}/${SAMPLE_PREFIX}_${LTR}_SUP_rev.fasta"
 
     echo "Processing $LTR reads (forward and reverse)..."
-    
+
     samtools view -F 20 "${DATA_SAM}/${SAMPLE_PREFIX}_mapping_${a}_SUP.sam" \
         | grep -v '^@' \
         | awk '{print ">" $1 "\n" $10}' > "$FORWARD_OUT"
@@ -67,9 +66,6 @@ done
 #######################
 # 2. Run UMI extraction
 #######################
-# Get the directory where this script lives
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 for LTR_NUM in 3 5; do
     FWD_FILE="${DIR_UMI}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_SUP_fwd.fasta"
     REV_FILE="${DIR_UMI}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_SUP_rev.fasta"
@@ -84,4 +80,16 @@ for LTR_NUM in 3 5; do
         -irev "$REV_FILE"
 done
 
-echo "####### DONE - $SAMPLE_PREFIX"
+#######################
+# Cleanup
+#######################
+rm -f \
+    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_SUP_fwd.fasta" \
+    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_SUP_rev.fasta" \
+    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_SUP_fwd.fasta" \
+    "${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_SUP_rev.fasta"
+
+echo "DONE"
+echo "Final outputs:"
+echo "  ${DIR_UMI}/${SAMPLE_PREFIX}_LTR3_UMI.fasta"
+echo "  ${DIR_UMI}/${SAMPLE_PREFIX}_LTR5_UMI.fasta"
