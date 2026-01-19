@@ -1,17 +1,4 @@
 #!/bin/bash
-#Need to be able to lauch direclty R script via command line
-
-#SBATCH --job-name=R_clonality_barcode01
-#SBATCH --nodes=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=24:00:00
-#SBATCH --mem=10G
-#SBATCH -p workq
-#SBATCH --output=run_IS_barcode01.out
-
-#module load statistics/R/4.3.1
-
-#!/bin/bash
 set -euo pipefail
 
 #######################
@@ -69,6 +56,8 @@ R_SCRIPT_DIR="$(cd "$(dirname "$R_PACKAGE_PATH")" && pwd)"
 #######################
 # Step 1: First R script
 #######################
+echo "Starting first R script..."
+
 Rscript "${R_SCRIPT_DIR}/run_IS_script_1.R" \
     "$R_PACKAGE_PATH" \
     "$SAMPLE_NAME" \
@@ -82,23 +71,31 @@ Rscript "${R_SCRIPT_DIR}/run_IS_script_1.R" \
     "$MAPQ_VAL" \
     "$ASSEMBLY"
 
+echo "First R script completed."
+
 #######################
 # Step 2: UMI clustering
 #######################
+echo "Starting UMI clustering..."
+
 for file in ${OUT_PATH}${SAMPLE_NAME}*data2*LTR*.txt; do
-    python3 "${R_SCRIPT_DIR}/UMI_clustering_hamming_ref.py" \
+    python3 ${R_SCRIPT_DIR}/UMI_clustering_hamming_ref.py \
         "$file" \
         "${file}_hamming_ref_mms${MMS}.txt" \
         --mismatch_threshold "$MMS"
 done
 
+echo "UMI clustering completed."
+
 #######################
 # Step 3: Merge chromosome files
 #######################
+echo "Merging LTR5 files..."
 awk 'FNR==1 && NR!=1 { next } { print }' \
     ${OUT_PATH}${SAMPLE_NAME}*data2*_LTR5.txt_hamming_ref_mms${MMS}.txt \
     > "${OUT_PATH}${SAMPLE_NAME}_merged_LTR5_mms${MMS}.txt"
 
+echo "Merging LTR3 files..."
 awk 'FNR==1 && NR!=1 { next } { print }' \
     ${OUT_PATH}${SAMPLE_NAME}*data2*_LTR3.txt_hamming_ref_mms${MMS}.txt \
     > "${OUT_PATH}${SAMPLE_NAME}_merged_LTR3_mms${MMS}.txt"
@@ -106,6 +103,8 @@ awk 'FNR==1 && NR!=1 { next } { print }' \
 #######################
 # Step 4: Second R script
 #######################
+echo "Starting second R script..."
+
 Rscript "${R_SCRIPT_DIR}/run_IS_script_2.R" \
     "$R_PACKAGE_PATH" \
     "$SAMPLE_NAME" \
@@ -118,10 +117,9 @@ Rscript "${R_SCRIPT_DIR}/run_IS_script_2.R" \
     "$THRESHOLD_RAW"
 
 #######################
-# Cleanup – keep only clonality results
+# Step 5: Cleanup intermediate files
 #######################
-find "$OUT_PATH" -type f ! -name "*clonalityResults*" -delete
+echo "####### Cleaning up intermediate files..."
+find "$OUT_PATH" -type f ! -name "*clonality*" -delete
 
-echo "DONE"
-echo "Final outputs kept:"
-echo "  ${OUT_PATH}/$SAMPLE_NAME*clonalityResults*"
+echo "####### JOB FINISHED SUCCESSFULLY - $SAMPLE_NAME"
