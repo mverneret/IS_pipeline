@@ -11,6 +11,7 @@
 
 #module load statistics/R/4.3.1
 
+#!/bin/bash
 set -euo pipefail
 
 #######################
@@ -20,28 +21,6 @@ show_help() {
     echo "Usage: $0 -i SAMPLE_NAME -r R_PACKAGE_PATH -o OUT_PATH -p INPUT_PAF_PATH -u INPUT_UMI_PATH -a ASSEMBLY \\"
     echo "          -5 TNAME_LTR5 -L LENGTH_LTR5 -3 TNAME_LTR3 -l LENGTH_LTR3 \\"
     echo "          -g MAXGAP_IS -q MAPQ -n NB_READ_PER_UMI -s MAXGAP_SHS -m MMS -t THRESHOLD_RAW -w WIN_MERGE"
-    echo ""
-    echo "Arguments:"
-    echo "  -i  Sample name (ex "barcode01")
-    echo "  -r  Path to the different R functions (must end with /; ex : script/R/Rpackages/)"
-    echo "  -o  Path to output directory (must end with /; ex : results/Rclonality/)"
-    echo "  -p  Path to input PAF directory (must end with /; ex : results/mapping/paf/)"
-    echo "  -u  Path to input UMI directory (must end with /; ex : results/extract_umi/)"
-    echo "  -a  Genome assembly name"
-    echo ""
-    echo "  -5  Name of the LTR5 virus sequence (in fasta ref with primers)"
-    echo "  -L  Total length of LTR5 target (with primers)"
-    echo "  -3  Name of the LTR3 virus sequence (in fasta ref with primers)"
-    echo "  -l  Total length of LTR3 target (with primers)"
-    echo ""
-    echo "  -g  Maximal distance between IS to merge"
-    echo "  -q  Minimum quality of mapping"
-    echo "  -n  Minimum number of reads to conserve a UMI group"
-    echo "  -s  Maximal distance between ShS to merge"
-    echo "  -m  Maximum number of mismatchs to regroup UMI in a group"
-    echo "  -t  Minimum number of raw reads by IS to keep it"
-    echo "  -w  Maximal distance between LTR5 and LTR3 IS to merge"
-    echo "  -h  Show this help message"
 }
 
 #######################
@@ -90,8 +69,6 @@ R_SCRIPT_DIR="$(cd "$(dirname "$R_PACKAGE_PATH")" && pwd)"
 #######################
 # Step 1: First R script
 #######################
-echo "Starting first R script..."
-
 Rscript "${R_SCRIPT_DIR}/run_IS_script_1.R" \
     "$R_PACKAGE_PATH" \
     "$SAMPLE_NAME" \
@@ -105,31 +82,23 @@ Rscript "${R_SCRIPT_DIR}/run_IS_script_1.R" \
     "$MAPQ_VAL" \
     "$ASSEMBLY"
 
-echo "First R script completed."
-
 #######################
 # Step 2: UMI clustering
 #######################
-echo "Starting UMI clustering..."
-
 for file in ${OUT_PATH}${SAMPLE_NAME}*data2*LTR*.txt; do
-    python3 ${R_SCRIPT_DIR}/UMI_clustering_hamming_ref.py \
+    python3 "${R_SCRIPT_DIR}/UMI_clustering_hamming_ref.py" \
         "$file" \
         "${file}_hamming_ref_mms${MMS}.txt" \
         --mismatch_threshold "$MMS"
 done
 
-echo "UMI clustering completed."
-
 #######################
 # Step 3: Merge chromosome files
 #######################
-echo "Merging LTR5 files..."
 awk 'FNR==1 && NR!=1 { next } { print }' \
     ${OUT_PATH}${SAMPLE_NAME}*data2*_LTR5.txt_hamming_ref_mms${MMS}.txt \
     > "${OUT_PATH}${SAMPLE_NAME}_merged_LTR5_mms${MMS}.txt"
 
-echo "Merging LTR3 files..."
 awk 'FNR==1 && NR!=1 { next } { print }' \
     ${OUT_PATH}${SAMPLE_NAME}*data2*_LTR3.txt_hamming_ref_mms${MMS}.txt \
     > "${OUT_PATH}${SAMPLE_NAME}_merged_LTR3_mms${MMS}.txt"
@@ -137,8 +106,6 @@ awk 'FNR==1 && NR!=1 { next } { print }' \
 #######################
 # Step 4: Second R script
 #######################
-echo "Starting second R script..."
-
 Rscript "${R_SCRIPT_DIR}/run_IS_script_2.R" \
     "$R_PACKAGE_PATH" \
     "$SAMPLE_NAME" \
@@ -150,5 +117,11 @@ Rscript "${R_SCRIPT_DIR}/run_IS_script_2.R" \
     "$WIN_MERGE" \
     "$THRESHOLD_RAW"
 
-echo "####### JOB FINISHED SUCCESSFULLY - $SAMPLE_NAME"
+#######################
+# Cleanup – keep only clonality results
+#######################
+find "$OUT_PATH" -type f ! -name "*clonalityResults*" -delete
 
+echo "DONE"
+echo "Final outputs kept:"
+echo "  ${OUT_PATH}/$SAMPLE_NAME*clonalityResults*"
