@@ -66,11 +66,8 @@ Input files :
     - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
   
 Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
-- **```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3**
-- ```${SAMPLE_NAME}_mapped_LTR${a}_SUP.sam|fastq``` : Only mapped reads on start LTR5 or end LTR3
-- ```${SAMPLE_NAME}_mapped_LTR${a}_mapping_${VIRUS_NAME}_provirus_wo_LTR_SUP.sam``` : Mapping results on provirus w/o LTR sequences
-- ```${SAMPLE_NAME}_LTR${a}_SUP.sam``` : Only non-mapped reads on provirus w/o LTR sequences
-- **```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering**
+- ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
+- ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.sam|fastq``` : Reads after all the steps + size filtering
 
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
@@ -103,9 +100,7 @@ Input files in ```bowtie2/```:
 - ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : sam files after bowtie2 mapping on LTR5 and 3
   
 Outputs in ```extract_umi/``` for each LTR${a} with a in {3,5}::
-- ```${SAMPLE_NAME}_LTR${a}_SUP_fwd.fasta``` : contains the reads in fwd orientation compared to ref LTR sequences
-- ```${SAMPLE_NAME}_LTR${a}_SUP_rev.fasta``` : contains reads in rev orientation compared to ref LTR sequences
-- **```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names**
+- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
   
 ## 5- Mapping
 The filtered reads are then mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
@@ -144,8 +139,7 @@ Input files :
 - ```bowtie2/${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
 
 Outputs in ```mapping/```:
-- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_sorted_SUP.bam``` : minimap2 output file in bam
-- **```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf**
+- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf
  
 
 ## 6- Integration sites extraction
@@ -192,11 +186,7 @@ Input files :
 - ```extract_umi/${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : Read sequences with identified UMi sequences in the read names
 
 Outputs in ```Rclonality/``` :
-- ```*merged*``` : Each reads with all their info + attributed UMI group
-- ```*positionreads*``` : Each reads with all their info + UMI, ShS and IS group
-- ```*countedreadsLTR3|LTR5*``` : Grouped IS with coordinates and nb of reads
-- ```*countedreadsLTR5LTR3*``` : Grouped IS with coordinates and nb of reads after LTR5 and LTR5 merge
-- **```*clonalityResults*.txt``` : Final IS results with clonality %**
+- ```*clonalityResults*.txt``` : Final IS results with clonality %
 
 ## Test dataset and reads simulation
 To test the pipeline (basecalling and demultiplexing steps are not included), test files and command lines are available in the ```test_file/``` folder. 
