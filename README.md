@@ -198,12 +198,17 @@ Input files :
 Outputs in ```Rclonality/``` :
 - ```*clonalityResults*.txt``` : Final IS results with clonality %
 
+
 ## Pipeline test
 To test the pipeline, test datasets are available in the ```test_file``` folder as well as a README file to have a step-by-step procedure to install and test the pipeline. 
+
+
 ___
 ## Correspondance
 Benjamin Riocreux-Verney
+
 Marie Verneret
+
 Jocelyn Turpin (jocelyn.turpin@univ-lyon1.fr)
 
 ## Citation
