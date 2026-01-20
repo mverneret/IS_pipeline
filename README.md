@@ -205,11 +205,9 @@ To test the pipeline, test datasets are available in the ```test_file``` folder 
 
 ___
 ## Correspondance
-Benjamin Riocreux-Verney
-
-Marie Verneret
-
-Jocelyn Turpin (jocelyn.turpin@univ-lyon1.fr)
+- Benjamin Riocreux-Verney
+- Marie Verneret
+- Jocelyn Turpin (jocelyn.turpin@univ-lyon1.fr)
 
 ## Citation
 ___
