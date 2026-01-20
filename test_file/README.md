@@ -4,6 +4,7 @@ These test files were generated from simulated reads obtained using the scripts 
 
 **Add read simulation principle**
 
+## Running tutorial
 #### 1- VM and tools install
 ```sh
 sudo apt update
