@@ -5,7 +5,7 @@ These test files were generated from simulated reads obtained using the scripts 
 **Add read simulation principle**
 
 ## Running tutorial
-#### 1- VM and tools install
+### 1- VM and tools install
 ```sh
 sudo apt update
 sudo apt install r-base r-base-dev
@@ -29,12 +29,12 @@ BiocManager::install("GenomicAlignments")
 BiocManager::install("stringdist")
 ```
 
-#### 2- Clone the IS_pipeline repository
+### 2- Clone the IS_pipeline repository
 ```sh
 git clone https://github.com/mverneret/IS_pipeline.git
 ```
 
-#### 3- Create the ref/ folder and reference files
+### 3- Create the ref/ folder and reference files
 ```sh
 WORKDIR="$(pwd)" 
 ##Ex on VM : "/home/ubuntu/data/mydatalocal"
@@ -60,7 +60,7 @@ prefix_chr="NC"
 awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
 ```
 
-#### 4- Create de results folder
+### 4- Create de results folder
 Different folders must be created for the outputs of the pipeline
 - ```sim/``` : results of the IS and reads simulation
 - ```bowtie2/``` : results of the 3-Filtering steps
@@ -74,9 +74,9 @@ cd test_IS
 mkdir R_clonality bowtie2 extract_UMI mapping sim
 ```
 
-#### 5- Test if the pipeline is working
+### 5- Test if the pipeline is working
 
-####### Simulate IS and reads #######
+##### Simulate IS and reads 
 ```sh
 bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -r ${WORKDIR}/ref/ARS12_noscaffold_masked.fa \
@@ -88,7 +88,7 @@ bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   > ${WORKDIR}/test_IS/random_IS_CH_1k.log 2>&1
 ```
 
-####### Align the random reads on LTR sequences and separate LTR5 and LTR3 #######
+##### Align the random reads on LTR sequences and separate LTR5 and LTR3 
 ```sh
 bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -r ${WORKDIR}/ref \
@@ -104,7 +104,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_bowtie2.log 2>&1
 ```
 
-####### Extract UMIs from the mapped reads #######
+##### Extract UMIs from the mapped reads
 ```sh
 bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
   -s ${WORKDIR}/test_IS/bowtie2 \
@@ -115,7 +115,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_extract_umi.log 2>&1
 ```
 
-####### Mapping of the reads on the virus + host ref genomes #######
+##### Mapping of the reads on the virus + host ref genomes
 ```sh
 bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -r ${WORKDIR}/ref \
@@ -127,7 +127,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1
 ```
 
-####### Identify integration sites #######
+##### Identify integration sites
 ```sh
 bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -i random_IS_CH_1k \
