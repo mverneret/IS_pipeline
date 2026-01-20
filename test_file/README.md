@@ -30,7 +30,9 @@ BiocManager::install("stringdist")
 ```
 
 #### 2- Clone the IS_pipeline repository
-```git clone https://github.com/mverneret/IS_pipeline.git```
+```sh
+git clone https://github.com/mverneret/IS_pipeline.git
+```
 
 #### 3- Create the ref/ folder and reference files
 ```sh
@@ -73,7 +75,9 @@ mkdir R_clonality bowtie2 extract_UMI mapping sim
 ```
 
 #### 5- Test if the pipeline is working
-```bash ${WORKDIR}/IS_pipeline/test_file/commands_test.sh```
+```sh
+bash ${WORKDIR}/IS_pipeline/test_file/commands_test.sh
+```
 
 
 
