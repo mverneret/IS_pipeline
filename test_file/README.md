@@ -38,19 +38,21 @@ cd ref
 
 This ```ref/``` folder must contain the host reference genome and the virus reference sequences (available in the ```test_file/ref``` folder of this repo) :
     - ```ARS12_reference_genome.fa``` 
-        The reference host genome can be downloaded as bellow :
-        ```sh
-        wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/704/415/GCF_001704415.2_ARS1.2/GCF_001704415.2_ARS1.2_genomic.fna.gz
-        gzip -d GCF_001704415.2_ARS1.2_genomic.fna.gz
-        ####### Mask and filter out scaffolds from the host reference genome #######
-        bedtools maskfasta -fi GCF_001704415.2_ARS1.2_genomic.fna -bed Annotation_ERV_ARS1.2_GCF_001704415.2_family_II-5.bed -fo GCF_001704415.2_masked.fa
-        prefix_chr="NC"
-        awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
-        ```
+
     - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences 
     - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
     - ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
     - ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences (only if you want to simulate reads)
+
+The reference host genome can be downloaded as bellow :
+```sh
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/704/415/GCF_001704415.2_ARS1.2/GCF_001704415.2_ARS1.2_genomic.fna.gz
+gzip -d GCF_001704415.2_ARS1.2_genomic.fna.gz
+####### Mask and filter out scaffolds from the host reference genome #######
+bedtools maskfasta -fi GCF_001704415.2_ARS1.2_genomic.fna -bed Annotation_ERV_ARS1.2_GCF_001704415.2_family_II-5.bed -fo GCF_001704415.2_masked.fa
+prefix_chr="NC"
+awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
+```
 
 #### Create de results folder
 Different folders must be created for the outputs of the pipeline
