@@ -13,10 +13,21 @@ ___
 - Nanofilt (2.8.0)
 - samtools (1.16.1)
 - bedtools (v2.30.0)
-- python (3.10.14) + edlib, pysam, tqdm, pandas, biopython
+- python (3.10.14)
+    - edlib
+    - pysam
+    - tqdm
+    - pandas
+    - biopython
 - minimap2 (2.26-r1175) + paftools.js
 - seqkt (1.5-r133)
-- R (> 4.3.1) + GenomicRanges, Rsamtools, changepoint, tidyverse, GenomicAlignments, stringdist
+- R (> 4.3.1)
+    - GenomicRanges
+    - Rsamtools
+    - changepoint
+    - tidyverse
+    - GenomicAlignments
+    - stringdist
 
 ## 1- Basecalling
 Basecalling was performed on the files generated from the different sequencing runs using the Dorado basecaller using super accurate basecalling with GPU acceleration, converting .fast5 to .bam formats.
