@@ -1,4 +1,8 @@
 # Test dataset and reads simulation
+To test the pipeline (basecalling and demultiplexing steps are not included), test files  are available in the ```test_file/``` folder. 
+These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. 
+
+**Add read simulation principle**
 
 #### 1- VM and tools install
 ```sh
@@ -53,9 +57,9 @@ prefix_chr="NC"
 awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
 ```
 
-#### Create de results folder
+#### 4- Create de results folder
 Different folders must be created for the outputs of the pipeline
-- ```sim/``` : results of the IS and reads simulation (reads fastq files)
+- ```sim/``` : results of the IS and reads simulation
 - ```bowtie2/``` : results of the 3-Filtering steps
 - ```extract_umi/```: results of the 4-Extract UMI
 - ```mapping/``` : results of the 5-Mapping
@@ -67,16 +71,8 @@ cd test_IS
 mkdir R_clonality bowtie2 extract_UMI mapping sim
 ```
 
-#### Test if the pipeline is working
-
+#### 5- Test if the pipeline is working
 ```bash ${WORKDIR}/IS_pipeline/test_file/commands_test.sh```
 
-To test the pipeline (basecalling and demultiplexing steps are not included), test files  are available in the ```test_file/``` folder. 
-These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. The rest of the pipeline was executed as for real samples.
-
-**Add read simulation principle**
-
-The arborescence of the folders was build as bellow:
-- ```scripts``` : includes all the necessary scripts to run the pipeline (```scripts``` folder of this repo + ```IS_simulation/scripts``` for the read simulation)
 
 
