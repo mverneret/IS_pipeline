@@ -38,7 +38,6 @@ cd ref
 
 This ```ref/``` folder must contain the host reference genome and the virus reference sequences (available in the ```test_file/ref``` folder of this repo) :
     - ```ARS12_reference_genome.fa``` 
-
     - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences 
     - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
     - ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
