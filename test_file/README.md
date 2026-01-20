@@ -1,6 +1,6 @@
 # Test dataset and reads simulation
 
-#### VM and tools install
+#### 1- VM and tools install
 ```sh
 sudo apt update
 sudo apt install r-base r-base-dev
@@ -24,10 +24,10 @@ BiocManager::install("GenomicAlignments")
 BiocManager::install("stringdist")
 ```
 
-#### Clone the IS_pipeline repository
+#### 2- Clone the IS_pipeline repository
 ```git clone https://github.com/mverneret/IS_pipeline.git```
 
-#### Create the ref/ folder and reference files
+#### 3- Create the ref/ folder and reference files
 ```sh
 WORKDIR="$(pwd)" 
 ##Ex on VM : "/home/ubuntu/data/mydatalocal"
@@ -37,11 +37,11 @@ cd ref
 ```
 
 This ```ref/``` folder must contain the host reference genome and the virus reference sequences (available in the ```test_file/ref``` folder of this repo) :
-    - ```ARS12_reference_genome.fa``` 
-    - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences 
-    - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
-    - ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
-    - ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences (only if you want to simulate reads)
+- ```ARS12_reference_genome.fa```
+- ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences
+- ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
+- ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
+- ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences (only if you want to simulate reads)
 
 The reference host genome can be downloaded as bellow :
 ```sh
@@ -55,11 +55,11 @@ awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefi
 
 #### Create de results folder
 Different folders must be created for the outputs of the pipeline
-    - ```sim/``` : results of the IS and reads simulation (reads fastq files)
-    - ```bowtie2/``` : results of the 3-Filtering steps
-    - ```extract_umi/```: results of the 4-Extract UMI
-    - ```mapping/``` : results of the 5-Mapping
-    - ```Rclonality/``` : results of the 6-Integration sites extraction
+- ```sim/``` : results of the IS and reads simulation (reads fastq files)
+- ```bowtie2/``` : results of the 3-Filtering steps
+- ```extract_umi/```: results of the 4-Extract UMI
+- ```mapping/``` : results of the 5-Mapping
+- ```Rclonality/``` : results of the 6-Integration sites extraction
     
 ```sh
 mkdir ${WORKDIR}/test_IS
