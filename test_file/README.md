@@ -75,8 +75,9 @@ mkdir R_clonality bowtie2 extract_UMI mapping sim
 ```
 
 #### 5- Test if the pipeline is working
-```sh
+
 ####### Simulate IS and reads #######
+```sh
 bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -r ${WORKDIR}/ref/ARS12_noscaffold_masked.fa \
   -n 1000 \
@@ -85,8 +86,10 @@ bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -d random_IS_CH_1k \
   -o ${WORKDIR}/test_IS/sim \
   > ${WORKDIR}/test_IS/random_IS_CH_1k.log 2>&1
-  
+```
+
 ####### Align the random reads on LTR sequences and separate LTR5 and LTR3 #######
+```sh
 bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -r ${WORKDIR}/ref \
   -o ${WORKDIR}/test_IS/bowtie2 \
@@ -99,8 +102,10 @@ bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -l 63 \
   -m 188 \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_bowtie2.log 2>&1
+```
 
 ####### Extract UMIs from the mapped reads #######
+```sh
 bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
   -s ${WORKDIR}/test_IS/bowtie2 \
   -o ${WORKDIR}/test_IS/extract_UMI \
@@ -108,8 +113,10 @@ bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
   -e 0 \
   -i random_IS_CH_1k \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_extract_umi.log 2>&1
+```
 
 ####### Mapping of the reads on the virus + host ref genomes #######
+```sh
 bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -r ${WORKDIR}/ref \
   -f ARS12_noscaffold_masked.fa \
@@ -118,8 +125,10 @@ bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -n 3824 \
   -i random_IS_CH_1k \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1
+```
 
 ####### Identify integration sites #######
+```sh
 bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -i random_IS_CH_1k \
   -r ${WORKDIR}/IS_pipeline/scripts/R/Rpackage/ \
@@ -140,6 +149,3 @@ bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -w 25 \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_IS.log 2>&1
 ```
-
-
-
