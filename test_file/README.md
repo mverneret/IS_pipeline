@@ -1,6 +1,6 @@
 # Test dataset and reads simulation
 
-### VM and tools install
+#### VM and tools install
 ```sh
 sudo apt update
 sudo apt install r-base r-base-dev
@@ -24,10 +24,10 @@ BiocManager::install("GenomicAlignments")
 BiocManager::install("stringdist")
 ```
 
-### Clone the IS_pipeline repository
+#### Clone the IS_pipeline repository
 ```git clone https://github.com/mverneret/IS_pipeline.git```
 
-### Create the ref/ folder and reference files
+#### Create the ref/ folder and reference files
 ```sh
 WORKDIR="$(pwd)" 
 ##Ex on VM : "/home/ubuntu/data/mydatalocal"
@@ -52,7 +52,7 @@ This ```ref/``` folder must contain the host reference genome and the virus refe
     - ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
     - ```seq_LTR_linker_CH.fasta``` including the sequences of the LTR5 and 3 (including primers) and the linker sequences (only if you want to simulate reads)
 
-### Create de results folder
+#### Create de results folder
 Different folders must be created for the outputs of the pipeline
     - ```sim/``` : results of the IS and reads simulation (reads fastq files)
     - ```bowtie2/``` : results of the 3-Filtering steps
@@ -66,7 +66,7 @@ cd test_IS
 mkdir R_clonality bowtie2 extract_UMI mapping sim
 ```
 
-### Test if the pipeline is working
+#### Test if the pipeline is working
 
 ```bash ${WORKDIR}/IS_pipeline/test_file/commands_test.sh```
 
