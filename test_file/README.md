@@ -1,8 +1,8 @@
 # Install and test dataset
 All the steps to install and set up the pipeline are detailed bellow. 
-The pipeline can be tested using the test dataset from the 3-Filtering steps to 6-IS extraction (basecalling and demultiplexing steps are not included in the test for now). 
+The pipeline can be tested using the test dataset from the **3-Filtering steps** to **6-IS extraction** (1-Basecalling and 2-Demultiplexing steps are not included in the test yet). 
 The test fastq file is composed of simulated reads obtained using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences.
-Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads are produced. 
+Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced. 
 
 ## Running tutorial
 ### 1- VM and tools install
@@ -139,3 +139,5 @@ bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -w 25 \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_IS.log 2>&1
 ```
+
+All the ouputs of the pipeline on the test dataset are given as an exemple in the ```test_file/results``` folder.
