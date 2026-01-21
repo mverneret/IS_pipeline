@@ -145,7 +145,7 @@ Options:
 
 Input files for each LTR${a} with a in {3,5}:
 - ```ref_noscaffold_masked.fa``` : Prepared reference genome in fasta
-- ```${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```ref/${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
+- ```${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
 - ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
 
 Output files for each LTR${a} with a in {3,5}:
