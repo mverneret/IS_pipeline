@@ -9,7 +9,7 @@ Reads are simulated using several steps and follow the principle to have one rea
 - Convert fasta to fastq file
 
 The structure of the reads is build as bellow:
-<img src="../image/Image1.png" width="50%">
+<img src="../image/Read_sim-1.png" width="80%">
 
 All the simulation can be excecuted using the ```simulate_reads.sh``` script.
 
