@@ -45,11 +45,11 @@ dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/RUN_${i}_SUP.bam --output-dir
 ## 3- Filtering steps
 Reads are filtered according to different criteria including :
 - Mapping quality (> Q20)
-- Mapping on the LTR5 end or LTR3 start
+- Mapping on the LTR5 start or LTR3 end
 - Not mapping on provirus without LTR sequences
 - Host genome size mapped (> 50bp)
 
-All these steps can be performed using the ```filter_reads.sh``` script that will deal with LTR5 and LTR3 reads.
+All these steps can be performed using the ```filter_reads.sh``` script that will deal with LTR5 and LTR3 reads separatly.
 
 **Usage**
 ```sh
@@ -75,7 +75,7 @@ Input files :
     - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
     - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
   
-Outputs in ```bowtie2/``` for each LTR${a} with a in {3,5}:
+Outputs for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
 - ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Reads after all the steps + size filtering
 
@@ -106,11 +106,11 @@ Options:
   -e <MAX_ERROR>        | Max pattern distance for UMI (allowed error)
   -i <SAMPLE_PREFIX>    | Sample name used as prefix for output files
 ```
-Input files in ```bowtie2/```:
-- ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : sam files after bowtie2 mapping on LTR5 and 3
+Input files for each LTR${a} with a in {3,5}:
+- ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : sam files obtained after bowtie2 mapping on LTR5 and LTR3
   
-Outputs in ```extract_umi/``` for each LTR${a} with a in {3,5}::
-- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMi sequences in the read names
+Output files for each LTR${a} with a in {3,5}:
+- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMI sequences in the read names
   
 ## 5- Mapping
 The filtered reads are then mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
@@ -143,12 +143,12 @@ Options:
   -i <SAMPLE_PREFIX>   | Sample prefix for output files
 ```
 
-Input files :
-- ```ref/ref_noscaffold_masked.fa``` : Prepared reference genome in fasta
-- ```ref/${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```ref/${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
-- ```bowtie2/${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
+Input files for each LTR${a} with a in {3,5}:
+- ```ref_noscaffold_masked.fa``` : Prepared reference genome in fasta
+- ```${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```ref/${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
+- ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
 
-Outputs in ```mapping/```:
+Output files for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf
  
 
@@ -191,13 +191,13 @@ Options:
   -w <WIN_MERGE>           | Maximal distance between LTR5 and LTR3 IS to merge
 ```
 
-Input files :
-- ```mapping/${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : Mapped and filtered reads from minimap2
-- ```extract_umi/${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : Read sequences with identified UMi sequences in the read names
+Input files for each LTR${a} with a in {3,5}:
+- ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : Mapped and filtered reads from minimap2
+- ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : Read sequences with identified UMI sequences in the read names obtained form extract_UMI step
 
-Outputs in ```Rclonality/``` :
-- ```*clonalityResults*.txt``` : Final IS results with clonality %
-##########**Add description of the output columns** 
+Output files :
+- ```${SAMPLE_NAME}_clonalityResults_mms${MMS}_ShS${MAXGAP_SHS}.txt``` : Final IS results with clonality %
+##########**Add description of the clonalityResults columns** 
 
 ## Pipeline test
 To test the pipeline, test datasets are available in the ```test_file``` folder as well as a README file to have a step-by-step procedure to install and test the pipeline. 
