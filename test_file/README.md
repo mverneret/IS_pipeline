@@ -5,9 +5,7 @@ The test fastq file is composed of simulated reads obtained using domestic goat 
 Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced. 
 
 ## Running tutorial
-### 1- VM and tools install
-
-########**Add minimum necessary parameter for the VM config**
+### 1- Install
 
 ```sh
 sudo apt update
