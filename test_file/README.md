@@ -46,7 +46,7 @@ cd ${WORKDIR}/IS_pipeline/test_file/ref
 ```
 
 This ```ref/``` folder must contain the host reference genome and the virus reference sequences :
-- ```ARS12_reference_genome.fa```
+- ```ARS12_noscaffold_masked.fa```
 - ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences
 - ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
 - ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
