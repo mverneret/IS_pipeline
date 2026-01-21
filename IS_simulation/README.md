@@ -2,7 +2,7 @@
 To test the pipeline (basecalling and demultiplexing steps are not included), test files  are available in the ```test_file/``` folder. 
 These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. 
 
-Reads are simulated using several steps:
+Reads are simulated using several steps and follow the principle to have one read per IS:
 - Generate random IS sites taking the chromosome size into account using ```random_sites.py```
 - Extract flanking region of the random IS : either in 5' or in 3' randomly using ```generate_flank_bed.py```
 - Build simulated reads simulating UMIs and using linker, LTR and host flanking genome sequences with ```final_random_reads.py```
