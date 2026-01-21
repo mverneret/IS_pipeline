@@ -59,7 +59,7 @@ prefix_chr="NC"
 awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
 ```
 
-### 4- Create de results folder
+### 4- Create the results folders
 Different folders must be created for the outputs of the pipeline
 - ```bowtie2/``` : results of the 3-Filtering steps
 - ```extract_umi/```: results of the 4-Extract UMI
@@ -72,7 +72,7 @@ cd ${WORKDIR}/ test_IS
 mkdir R_clonality bowtie2 extract_UMI mapping
 ```
 
-### 5- Test if the pipeline is working
+### 5- Pipeline test
 
 ##### Align the reads on LTR sequences and separate LTR5 and LTR3 
 ```sh
