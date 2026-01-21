@@ -5,7 +5,7 @@ Pipeline inspired from PCIP-seq ([Artesi et al., 2021](https://genomebiology.bio
 
 ___
 ## Workflow
-<img src="image/Image1.png" width="80%">
+<img src="image/Image1.png" width="60%">
 
 ## Dependancies
 - dorado
