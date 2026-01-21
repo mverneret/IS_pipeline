@@ -1,7 +1,7 @@
 # Integration Sites pipeline
 Pipeline inspired from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)) and INSERT-seq ([Ivančić et al., 2022](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02778-9)) pipelines to identify integration sites (IS) by long read sequencing using Nanopore technology. To do this, the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers. The resulting reads are filtered to keep only the one including viral and host sequences. The main steps and expected structure of the reads are shown bellow for LTR5. Same principle is applied for LTR3.
 
-<img src="image/Image2.png" width="80%">
+<img src="image/Image2.png" width="70%">
 
 ___
 ## Workflow
