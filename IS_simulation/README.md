@@ -9,7 +9,7 @@ Reads are simulated using several steps:
 - Convert fasta to fastq file
 
 The structure of the reads is build as bellow:
-
+**Add the image of the structure**
 
 All the simulation can be excecuted using the ```simulate_reads.sh``` script.
 
