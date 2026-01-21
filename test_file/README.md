@@ -6,6 +6,9 @@ Check on ```IS_simulation/README.rmd``` for more information on how the simulate
 
 ## Running tutorial
 ### 1- VM and tools install
+
+**Add minimum necessary parameter for the VM config**
+
 ```sh
 sudo apt update
 sudo apt install r-base r-base-dev
@@ -141,3 +144,4 @@ bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
 ```
 
 All the ouputs of the pipeline on the test dataset are given as an exemple in the ```test_file/results``` folder.
+**Add the R_clonality results**
