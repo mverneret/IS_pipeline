@@ -142,4 +142,3 @@ bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
 ```
 
 All the ouputs of the pipeline on the test dataset are given as an exemple in the ```test_file/results``` folder.
-#########**Add the R_clonality results**
