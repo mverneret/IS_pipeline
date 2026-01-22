@@ -45,13 +45,25 @@ sudo apt install -y \
 #in R
 install.packages('BiocManager', repos='https://cloud.r-project.org')
 BiocManager::install(c('GenomicRanges', 'Rsamtools', 'GenomicAlignments'))
-install.packages(c('stringdist', 'changepoint', 'tidyverse'), repos = 'https://cloud.r-project.org')
+install.packages(c('stringdist', 'changepoint'), repos = 'https://cloud.r-project.org')
 # ---------- test libraries ----------
 library(GenomicRanges)
 library(Rsamtools)
 library(GenomicAlignments)
 library(stringdist)
 library(changepoint)
+q()
+
+#Install specifically tidyverse
+sudo apt update
+sudo apt install -y \
+  libfontconfig1-dev \
+  libfreetype6-dev \
+  libharfbuzz-dev \
+  libfribidi-dev \
+  pkg-config
+# In R
+install.packages("tidyverse")
 library(tidyverse)
 ```
 
