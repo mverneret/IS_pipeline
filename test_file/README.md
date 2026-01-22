@@ -108,7 +108,7 @@ Different folders must be created for the outputs of the pipeline
     
 ```sh
 mkdir ${WORKDIR}/test_IS
-cd ${WORKDIR}/ test_IS
+cd ${WORKDIR}/test_IS
 mkdir R_clonality bowtie2 extract_UMI mapping
 ```
 
