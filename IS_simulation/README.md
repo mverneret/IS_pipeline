@@ -52,4 +52,4 @@ bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   > ${WORKDIR}/IS_pipeline/test_file/random_IS_CH_1k.log 2>&1
 ```
 
-**The fastq file produced can then be used for multiple purposes including the run of the IS_pipeline as for real samples.**
+**The fastq file produced can then be analyzed with the IS_pipeline as real samples.**
