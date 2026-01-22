@@ -96,6 +96,7 @@ gzip -d GCF_001704415.2_ARS1.2_genomic.fna.gz
 bedtools maskfasta -fi GCF_001704415.2_ARS1.2_genomic.fna -bed CH_annotation_II-5_ARS1.2.bed -fo GCF_001704415.2_masked.fa
 prefix_chr="NC"
 awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
+rm GCF_001704415.2*
 ```
 
 ### 4- Create the results folders
