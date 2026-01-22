@@ -5,7 +5,7 @@ The test fastq file is composed of simulated reads obtained using domestic goat 
 Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced. 
 
 ## Running tutorial
-### 1- Install
+### 1- Install dependancies
 
 ```sh
 sudo apt update
