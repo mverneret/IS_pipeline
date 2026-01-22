@@ -34,7 +34,7 @@ Output files:
 - ```${PREFIX}.bed``` : position of the simulated IS in bed format
 - ```${PREFIX}_reads.fq``` : fastq files of the simulated reads
 
-### Example of run to produce the test dataset
+### Example of usage
 ```sh
 WORKDIR="$(pwd)" 
 ##Ex on VM : "/home/ubuntu/data/mydatalocal"
