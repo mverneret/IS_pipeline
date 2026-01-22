@@ -42,32 +42,17 @@ sudo apt install -y \
   liblzma-dev
 
 # ---------- R packages (CRAN + Bioconductor) ----------
-R -e "
-if (!requireNamespace('BiocManager', quietly = TRUE))
-  install.packages('BiocManager', repos='https://cloud.r-project.org');
-
-BiocManager::install(
-  c('GenomicRanges', 'Rsamtools', 'GenomicAlignments'),
-  ask = FALSE,
-  update = FALSE
-);
-
-install.packages(
-  c('stringdist', 'changepoint', 'tidyverse'),
-  repos = 'https://cloud.r-project.org'
-);
-"
-
+#in R
+install.packages('BiocManager', repos='https://cloud.r-project.org')
+BiocManager::install(c('GenomicRanges', 'Rsamtools', 'GenomicAlignments'))
+install.packages(c('stringdist', 'changepoint', 'tidyverse'), repos = 'https://cloud.r-project.org')
 # ---------- test libraries ----------
-R -e "
 library(GenomicRanges)
 library(Rsamtools)
 library(GenomicAlignments)
 library(stringdist)
 library(changepoint)
 library(tidyverse)
-cat('All libraries loaded successfully\n')
-"
 ```
 
 ### 2- Clone the IS_pipeline repository
