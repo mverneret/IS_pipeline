@@ -67,6 +67,7 @@ library(stringdist)
 library(changepoint)
 library(tidyverse)
 cat('All libraries loaded successfully\n')
+"
 ```
 
 ### 2- Clone the IS_pipeline repository
