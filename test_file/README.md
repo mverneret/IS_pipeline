@@ -9,25 +9,64 @@ Check on ```IS_simulation/README.rmd``` for more information on how the simulate
 
 ```sh
 sudo apt update
+#install R
 sudo apt install r-base r-base-dev
+#install python3 packages
 sudo apt install python3-edlib python3-pysam python3-tqdm python3-pandas python3-biopython
+#install other tools needed in the pipeline
 sudo apt install samtools bedtools seqtk bowtie2 nanofilt
+
 #install minimap2 and paftools.js
 git clone https://github.com/lh3/minimap2
 cd minimap2 && make
 curl -L https://github.com/attractivechaos/k8/releases/download/v0.2.4/k8-0.2.4.tar.bz2 | tar -jxf -
-cp k8-0.2.4/k8-`uname -s` k8  
+cp k8-0.2.4/k8-`uname -s` k8
+
 #install R packages
-sudo apt install libbz2-dev liblzma-dev zlib1g-dev
-#in R
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("GenomicRanges")
-BiocManager::install("Rsamtools")
-install.packages("changepoint")
-install.packages("tidyverse")
-BiocManager::install("GenomicAlignments")
-BiocManager::install("stringdist")
+# ---------- system dependencies ----------
+sudo apt update
+sudo apt install -y \
+  build-essential \
+  pkg-config \
+  libcurl4-openssl-dev \
+  libssl-dev \
+  libxml2-dev \
+  zlib1g-dev \
+  libharfbuzz-dev \
+  libfribidi-dev \
+  libfreetype6-dev \
+  libpng-dev \
+  libtiff5-dev \
+  libjpeg-dev \
+  libbz2-dev \
+  liblzma-dev
+
+# ---------- R packages (CRAN + Bioconductor) ----------
+R -e "
+if (!requireNamespace('BiocManager', quietly = TRUE))
+  install.packages('BiocManager', repos='https://cloud.r-project.org');
+
+BiocManager::install(
+  c('GenomicRanges', 'Rsamtools', 'GenomicAlignments'),
+  ask = FALSE,
+  update = FALSE
+);
+
+install.packages(
+  c('stringdist', 'changepoint', 'tidyverse'),
+  repos = 'https://cloud.r-project.org'
+);
+"
+
+# ---------- test libraries ----------
+R -e "
+library(GenomicRanges)
+library(Rsamtools)
+library(GenomicAlignments)
+library(stringdist)
+library(changepoint)
+library(tidyverse)
+cat('All libraries loaded successfully\n')
 ```
 
 ### 2- Clone the IS_pipeline repository
