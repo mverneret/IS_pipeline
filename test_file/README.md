@@ -93,7 +93,7 @@ The reference host genome can be downloaded as bellow :
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/704/415/GCF_001704415.2_ARS1.2/GCF_001704415.2_ARS1.2_genomic.fna.gz
 gzip -d GCF_001704415.2_ARS1.2_genomic.fna.gz
 ####### Mask and filter out scaffolds from the host reference genome #######
-bedtools maskfasta -fi GCF_001704415.2_ARS1.2_genomic.fna -bed Annotation_ERV_ARS1.2_GCF_001704415.2_family_II-5.bed -fo GCF_001704415.2_masked.fa
+bedtools maskfasta -fi GCF_001704415.2_ARS1.2_genomic.fna -bed CH_annotation_II-5_ARS1.2.bed -fo GCF_001704415.2_masked.fa
 prefix_chr="NC"
 awk -v prefix_chr="^>${prefix_chr}" ' BEGIN { keep=0 } /^>/ { keep = ($0 ~ prefix_chr) } keep { print } ' GCF_001704415.2_masked.fa > ARS12_noscaffold_masked.fa
 ```
