@@ -82,16 +82,16 @@ Outputs for each LTR${a} with a in {3,5}:
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
 We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
-Briefly this script is based on the specific structure of the UMIs integrated in fixed linker sequences. These UMI are 16bp long and composed as bellow :
-- ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward reads
-- ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reversed reads
+Briefly this script is based on the specific structure of the UMIs integrated in the fixed linker sequences. These UMI are 16bp long and composed as bellow :
+- ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward orientation
+- ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reverse orientation
 
 The workflow to extract the UMI from the reads is composed of different steps :
 - Define UMI structure based on the LTR (different inputs for LTR5 or 3) 
-- As the UMI are located in the adapter at the extremity of the reads, extract the begining or end of the reads (length of the adapter) depending on the strand (+/-) and LTR (5 or 3).
-- Align the sequence of the adapter to the UMI pattern (using semi-global alignment)
-- Identify UMI in adapter sequences allowing --max-error mismatchs/indels
-- Write in the fasta output headers including read_ID, strand, distance from UMI pattern and UMI sequence
+- As the UMI are located in the linker at the extremity of the reads, extract the begining or the end of the reads using the length of the adapter depending on the strand (+/-) and LTR (5 or 3).
+- Align the sequence of the linker to the UMI pattern (using semi-global alignment)
+- Identify UMI in the linker sequences allowing --max-error mismatchs/indels
+- Write in a fasta output the reads and headers including read_ID, strand, UMI sequence distance from UMI pattern and UMI sequence
 
 The UMI extraction can be performed using the ```extract_umi.sh``` script.
 
@@ -100,10 +100,10 @@ The UMI extraction can be performed using the ```extract_umi.sh``` script.
 ./extract_umi.sh -s <string> -o <string> -a <int> -e <int> -i <string>
 
 Options:
-  -s <DATA_SAM>         | Path to directory of the SAM files obtained after the LTR mapping (barcode${i}_mapping_${a}_SUP.sam)
+  -s <DATA_SAM>         | Path to directory of the SAM files obtained after the LTR mapping
   -o <DIR_UMI>          | Path to UMI output directory
   -a <ADAPTER_LENGTH>   | Linker size 
-  -e <MAX_ERROR>        | Max pattern distance for UMI (allowed error)
+  -e <MAX_ERROR>        | Max pattern distance for UMI sequences (allowed mismatchs/indels)
   -i <SAMPLE_PREFIX>    | Sample name used as prefix for output files
 ```
 Input files for each LTR${a} with a in {3,5}:
@@ -119,7 +119,7 @@ The steps includes :
 - Create the hybrid reference concatenating host genome and LTR sequences
 - Map the filtered reads on the hybrid genome using minimap2
 
-The first step is to prepare the host reference genome (masking + delete scaffold if wanted):
+The first optional step is to prepare the host reference genome (masking + delete scaffold if wanted):
 ```sh
 ####Mask the reference genome using ERV/TE annotation
 bedtools maskfasta -fi reference_genome.fa -bed TE_annotation.bed -fo ref_masked.fa
@@ -144,7 +144,7 @@ Options:
 ```
 
 Input files for each LTR${a} with a in {3,5}:
-- ```ref_noscaffold_masked.fa``` : Prepared reference genome in fasta
+- ```ref_noscaffold_masked.fa``` : Reference genome in fasta
 - ```${VIRUS_NAME}_endU3RU5_withprimer.fa``` + ```${VIRUS_NAME}_startU3_withprimer.fa``` : Virus LTR reference sequences in fasta (with primers)
 - ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Fastq files after bowtie2 mapping + filtering
 
@@ -158,7 +158,7 @@ After the mapping, the goal is to identify the different integration sites using
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
 - Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
 - Remove PCR duplicates according to the IS, ShS and UMI groups
-- Merge LTR5 and LTR3 information 
+- Merge LTR5 and LTR3 information and keep max sister cells count
 - Quantify clonal abundancy (for each IS nb of sister cells without PCR duplicates)
 
 All these steps can be performed using ```run_IS.sh``` script that will call different R functions.
@@ -171,10 +171,10 @@ All these steps can be performed using ```run_IS.sh``` script that will call dif
 
 Options:
   -i <SAMPLE_NAME>         | Name of the sample (ex: barcode01)
-  -r <R_PACKAGE_PATH>      | Path to directory of the different R functions (ex: ~/script/Rpackages/)
-  -o <OUT_PATH>            | Path to directory for output files (ex: ~/results/R_clonality/)
-  -p <INPUT_PAF_PATH>      | Path to directory of the paf input files obtained after the step 5 (ex: ~/results/mapping/paf/)
-  -u <INPUT_UMI_PATH>      | Path to directory of the UMI input files obtained after the step 4 (ex: ~/results/extract_UMI/)
+  -r <R_PACKAGE_PATH>      | Path to directory of the different R functions (ex: "~/script/Rpackages/")
+  -o <OUT_PATH>            | Path to directory for output files (ex: "~/results/R_clonality/")
+  -p <INPUT_PAF_PATH>      | Path to directory of the paf input files obtained after the step 5 (ex: "~/results/mapping/paf/")
+  -u <INPUT_UMI_PATH>      | Path to directory of the UMI input files obtained after the step 4 (ex: "~/results/extract_UMI/")
   -a <ASSEMBLY>            | Name of the reference genome assembly
 
   -5 <TNAME_LTR5>          | Name of the LTR5 virus sequence (used for the minimap2 mapping)
