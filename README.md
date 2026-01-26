@@ -197,6 +197,7 @@ Input files for each LTR${a} with a in {3,5}:
 
 Output files :
 - ```${SAMPLE_NAME}_clonalityResults_mms${MMS}_ShS${MAXGAP_SHS}.txt``` : Final IS results with clonality %
+  
 The clonality file is composed of several columns :
 ```sh
 C1: Chromosome
