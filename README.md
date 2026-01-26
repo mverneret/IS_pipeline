@@ -197,7 +197,21 @@ Input files for each LTR${a} with a in {3,5}:
 
 Output files :
 - ```${SAMPLE_NAME}_clonalityResults_mms${MMS}_ShS${MAXGAP_SHS}.txt``` : Final IS results with clonality %
-##########**Add description of the clonalityResults columns** 
+The clonality file is composed of several columns :
+```sh
+C1: Chromosome
+C2: Strand
+C3: IS position estimate 
+C4: Minimum IS position gave by LTR5 reads
+C5: Maximum IS position gave by LTR5 reads
+C6: Minimum IS position gave by LTR3 reads
+C7: Maximum IS poisiton gave by LTR3 reads
+C8: IS supported by LTR5, LTR3 or both LTR5 and LTR3 reads
+C9: Raw number of reads supporting the IS
+C10: Unique number of ShearSites groups for the IS (ShS grouped by position +/- maxgapShS)
+C10: Number of sister cells associated to the IS (corrected by ShearSite groups and UMI sequences +/- mms)
+C11: Proportion of sister cells associated to the IS compared to the total number of sister cells for all IS
+```
 
 ## Pipeline test
 To test the pipeline, test datasets are available in the ```test_file``` folder as well as a README file to have a step-by-step procedure to install and test the pipeline. 
