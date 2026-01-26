@@ -37,16 +37,48 @@ mkdir -p "$OUT_DIR"
 # Step 1: Add LTR to reference
 #######################
 echo "Add LTR sequences to the host reference genome"
+
 MASKED_LTR5="${REF_DIR}/${REF_NAME%.fa}_${VIRUS_NAME}_LTR5_withprimer.fa"
 MASKED_LTR3="${REF_DIR}/${REF_NAME%.fa}_${VIRUS_NAME}_LTR3_withprimer.fa"
-cat "${REF_DIR}/$REF_NAME" "${REF_DIR}/${VIRUS_NAME}_endU3RU5_withprimer.fa" > "$MASKED_LTR3"
-cat "${REF_DIR}/$REF_NAME" "${REF_DIR}/${VIRUS_NAME}_startU3_withprimer.fa" > "$MASKED_LTR5"
+
+if [[ ! -f "$MASKED_LTR3" ]]; then
+    echo "Creating $MASKED_LTR3"
+    cat "${REF_DIR}/$REF_NAME" \
+        "${REF_DIR}/${VIRUS_NAME}_endU3RU5_withprimer.fa" \
+        > "$MASKED_LTR3"
+else
+    echo "Found existing $MASKED_LTR3 — skipping"
+fi
+
+if [[ ! -f "$MASKED_LTR5" ]]; then
+    echo "Creating $MASKED_LTR5"
+    cat "${REF_DIR}/$REF_NAME" \
+        "${REF_DIR}/${VIRUS_NAME}_startU3_withprimer.fa" \
+        > "$MASKED_LTR5"
+else
+    echo "Found existing $MASKED_LTR5 — skipping"
+fi
+
 
 #######################
 # Step 2: Index hybrid references
 #######################
-minimap2 -d "${MASKED_LTR3%.fa}.mmi" "$MASKED_LTR3"
-minimap2 -d "${MASKED_LTR5%.fa}.mmi" "$MASKED_LTR5"
+MMI_LTR3="${MASKED_LTR3%.fa}.mmi"
+MMI_LTR5="${MASKED_LTR5%.fa}.mmi"
+
+if [[ ! -f "$MMI_LTR3" ]]; then
+    echo "Indexing $MASKED_LTR3"
+    minimap2 -d "$MMI_LTR3" "$MASKED_LTR3"
+else
+    echo "Found existing $MMI_LTR3 — skipping"
+fi
+
+if [[ ! -f "$MMI_LTR5" ]]; then
+    echo "Indexing $MASKED_LTR5"
+    minimap2 -d "$MMI_LTR5" "$MASKED_LTR5"
+else
+    echo "Found existing $MMI_LTR5 — skipping"
+fi
 
 #######################
 # Step 3: Map reads for each LTR
