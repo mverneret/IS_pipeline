@@ -73,6 +73,7 @@ mergeLTRs <- function(IS = NULL, win = 25, threshold.raw = 3, threshold.ShS = 2)
       maxPosition.LTR3,
       LTR,
       raw.ALL.max,
+      filtered.corShS.max,
       filtered.corShSUMIcor.max)
   
     #A modifier pour filtrer les site d'intégration et les pourcentages de quantif à afficher 
@@ -87,4 +88,5 @@ mergeLTRs <- function(IS = NULL, win = 25, threshold.raw = 3, threshold.ShS = 2)
   return(IS.final3)
   
 }
+
 
