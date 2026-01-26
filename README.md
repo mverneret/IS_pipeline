@@ -208,9 +208,9 @@ C5: Maximum IS position gave by LTR5 reads (grouped by IS position +/- maxgapIS)
 C6: Minimum IS position gave by LTR3 reads (grouped by IS position +/- maxgapIS)
 C7: Maximum IS poisiton gave by LTR3 reads (grouped by IS position +/- maxgapIS)
 C8: IS supported by LTR5, LTR3 or both LTR5 and LTR3 reads
-C9: Raw number of reads supporting the IS
-C10: Unique number of ShearSites groups for the IS (ShS grouped by position +/- maxgapShS)
-C11: Number of sister cells associated to the IS (corrected by ShearSite groups and UMI groups by sequences +/- mms)
+C9: Raw number of reads associated to the IS
+C10: Number of ShearSites groups associated to the IS (ShS grouped by position +/- maxgapShS)
+C11: Number of sister cells associated to the IS (= Unique ShearSite groups and UMI groups. UMI groups obtained merging UMI sequences +/- mms)
 C12: Proportion of sister cells associated to the IS compared to the total number of sister cells for all IS (in %)
 ```
 
