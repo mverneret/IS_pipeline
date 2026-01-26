@@ -198,15 +198,15 @@ Input files for each LTR${a} with a in {3,5}:
 Output files :
 - ```${SAMPLE_NAME}_clonalityResults_mms${MMS}_ShS${MAXGAP_SHS}.txt``` : Final IS results with clonality %
   
-The clonality file is composed of several columns :
+The clonality output file is composed of several columns :
 ```sh
 C1: Chromosome
 C2: Strand
 C3: IS position estimate 
-C4: Minimum IS position gave by LTR5 reads
-C5: Maximum IS position gave by LTR5 reads
-C6: Minimum IS position gave by LTR3 reads
-C7: Maximum IS poisiton gave by LTR3 reads
+C4: Minimum IS position gave by LTR5 reads (grouped by IS position +/- maxgapIS)
+C5: Maximum IS position gave by LTR5 reads (grouped by IS position +/- maxgapIS)
+C6: Minimum IS position gave by LTR3 reads (grouped by IS position +/- maxgapIS)
+C7: Maximum IS poisiton gave by LTR3 reads (grouped by IS position +/- maxgapIS)
 C8: IS supported by LTR5, LTR3 or both LTR5 and LTR3 reads
 C9: Raw number of reads supporting the IS
 C10: Unique number of ShearSites groups for the IS (ShS grouped by position +/- maxgapShS)
