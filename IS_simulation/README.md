@@ -47,7 +47,7 @@ bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -r ${WORKDIR}/IS_pipeline/test_file/ref/ARS12_noscaffold_masked.fa \
   -n 1000 \
   -f 260 \
-  -l ${WORKDIR}/IS_pipeline/test_file/seq_LTR_linker_CH.fasta \
+  -l ${WORKDIR}/IS_pipeline/IS_simulation/test_file/seq_LTR_linker_CH.fasta \
   -d random_IS_CH_1k \
   -o ${WORKDIR}/IS_pipeline/test_file \
   > ${WORKDIR}/IS_pipeline/test_file/random_IS_CH_1k.log 2>&1
