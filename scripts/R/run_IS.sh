@@ -49,6 +49,25 @@ if [[ -z "${SAMPLE_NAME:-}" || -z "${R_PACKAGE_PATH:-}" || -z "${OUT_PATH:-}" ||
     exit 1
 fi
 
+#######################
+# Pre-run cleanup: remove existing files with same sample prefix
+#######################
+if [[ -d "$OUT_PATH" ]]; then
+    echo "Checking for existing files with prefix ${SAMPLE_NAME} in ${OUT_PATH}..."
+
+    shopt -s nullglob
+    existing_files=("${OUT_PATH}${SAMPLE_NAME}"*)
+    shopt -u nullglob
+
+    if (( ${#existing_files[@]} > 0 )); then
+        echo "Found existing files. Removing them..."
+        rm -f "${existing_files[@]}"
+        echo "Previous files removed."
+    else
+        echo "No existing files found."
+    fi
+fi
+
 mkdir -p "$OUT_PATH"
 
 R_SCRIPT_DIR="$(cd "$(dirname "$R_PACKAGE_PATH")" && pwd)"
