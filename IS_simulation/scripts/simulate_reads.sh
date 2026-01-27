@@ -134,8 +134,8 @@ seqtk seq -F 'I' "$FASTA_READS" > "$FASTQ_READS"
 ##############################
 echo "####### Cleaning up intermediate files..."
 find "$OUT_DIR" -type f ! \( \
-  -name "${OUT_PREFIX}_sorted.bed" -o \
-  -name "${OUT_PREFIX}_reads.fq" \
+  -name "*_sorted.bed" -o \
+  -name "*_reads.fq" \
 \) -delete
 
 echo "####### DONE"
