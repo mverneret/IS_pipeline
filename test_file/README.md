@@ -54,7 +54,6 @@ library(Rsamtools)
 library(GenomicAlignments)
 library(stringdist)
 library(changepoint)
-q()
 
 #Install specifically tidyverse
 sudo apt update
