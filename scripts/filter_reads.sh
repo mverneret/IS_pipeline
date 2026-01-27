@@ -117,10 +117,10 @@ echo "####### Cleaning up intermediate files..."
 
 # Keep only mapping SAMs and filtered FASTQ
 find "$OUT_DIR" -type f ! \( \
-  -name "${SAMPLE_NAME}_mapping_endU3RU5_SUP.sam" -o \
-  -name "${SAMPLE_NAME}_mapping_startU3_SUP.sam" -o \
-  -name "${SAMPLE_NAME}_LTR3_filtered_size_SUP.fastq" -o \
-  -name "${SAMPLE_NAME}_LTR5_filtered_size_SUP.fastq" \
+  -name "*_mapping_endU3RU5_SUP.sam" -o \
+  -name "*_mapping_startU3_SUP.sam" -o \
+  -name "*_LTR3_filtered_size_SUP.fastq" -o \
+  -name "*_LTR5_filtered_size_SUP.fastq" \
 \) -delete
 
 echo "####### DONE - ${SAMPLE_NAME}"
