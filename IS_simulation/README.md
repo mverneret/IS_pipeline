@@ -39,7 +39,8 @@ Output files:
 WORKDIR="$(pwd)" 
 ##Ex on VM : "/home/ubuntu/data/mydatalocal"
 
-# Domestic goat is used as reference genome (GCF_001704415.2). Check the 3- step of the test_file/README.md for genome download and preparation
+# Domestic goat is used as reference genome (GCF_001704415.2).
+# Check the 3- step of the test_file/README.md for genome download and preparation
 # LTRs sequences from 3824-ENTV2 are used and present in the seq_LTR_linker.fasta file for simulation
 # Simulate 1000 IS and reads with 260bp of flanking goat genome
 bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
