@@ -22,7 +22,7 @@ cd minimap2 && make
 curl -L https://github.com/attractivechaos/k8/releases/download/v0.2.4/k8-0.2.4.tar.bz2 | tar -jxf -
 cp k8-0.2.4/k8-`uname -s` k8
 #replace by the minimap2 path
-export PATH="$PATH:/home/ubuntu/data/mydatalocal/minimap2:/home/ubuntu/data/mydatalocal/minimap2/misc"
+export PATH="$PATH:/home/ubuntu/minimap2:/home/ubuntu/minimap2/misc"
 source ~/.bashrc
 
 #install R packages
