@@ -116,7 +116,8 @@ mkdir R_clonality bowtie2 extract_UMI mapping
 
 ##### Align the reads on LTR sequences and separate LTR5 and LTR3 
 ```sh
-# Reads aligned on 3824-ENTV2 reference sequence and keep those with MAPQ > 20, with a length > length linker+mapped_genome+LTR
+# Reads aligned on 3824-ENTV2 reference sequence and keep those with
+# MAPQ > 20 + length > length linker+mapped_genome+LTR
 # For LTR5 read length > 57+50+63
 # For LTR3 read length > 57+50+188
 bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
