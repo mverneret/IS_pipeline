@@ -6,6 +6,11 @@ All the steps to install and set up the pipeline are detailed bellow.
 
 ### 1- Clone the IS_pipeline repository
 ```sh
+WORKDIR="$(pwd)" 
+##Ex on VM : "/home/ubuntu/data/mydatalocal"
+```
+
+```sh
 git clone https://github.com/mverneret/IS_pipeline.git
 ```
 
@@ -13,9 +18,9 @@ git clone https://github.com/mverneret/IS_pipeline.git
 
 **Using mamba**
 
-- Re-create the mamba environment
+- Charge the .yml file
 ```sh
-mamba env create -f IS_pipeline.yml
+mamba env create -f ${WORKDIR}/IS_pipeline/test_file/IS_pipeline.yml
 ```
 
 - **OR** create the mamba environment directly
@@ -115,9 +120,6 @@ library(tidyverse)
 
 ### 3- The ref/ folder and reference files
 ```sh
-WORKDIR="$(pwd)" 
-##Ex on VM : "/home/ubuntu/data/mydatalocal"
-
 cd ${WORKDIR}/IS_pipeline/test_file/ref
 ```
 
