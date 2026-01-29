@@ -23,7 +23,7 @@ git clone https://github.com/mverneret/IS_pipeline.git
 mamba env create -f ${WORKDIR}/IS_pipeline/test_file/IS_pipeline.yml
 ```
 
-- **OR** create the mamba environment directly
+- **OR** create the mamba environment manualy
 ```sh
 mamba create -n IS_pipeline \
   python=3.10.14 \
