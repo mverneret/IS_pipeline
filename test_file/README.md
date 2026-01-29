@@ -1,7 +1,6 @@
 # Install and test dataset
 All the steps to install and set up the pipeline are detailed bellow. 
-The pipeline can be tested using the test dataset from the **3-Filtering steps** to **6-IS extraction** (1-Basecalling and 2-Demultiplexing steps are not included in the test yet). 
-The test fastq file is composed of simulated reads obtained using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences.
+The pipeline can be tested using the test dataset composed of simulated reads obtained using ARS1.2 domestic goat genome (GCF_001704415.2) and ENTV-2 (strain FR3824, PP669281.1) as reference sequences.
 Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced. 
 
 ## Running tutorial
@@ -83,10 +82,10 @@ cd ${WORKDIR}/IS_pipeline/test_file/ref
 ```
 
 This ```ref/``` folder must contain the host reference genome and the virus reference sequences :
-- ```ARS12_noscaffold_masked.fa```
-- ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : LTR5 virus reference sequences
-- ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : LTR3 virus reference sequences
-- ```3824_provirus_wo_LTR.fa``` : INT part without LTR virus reference sequences
+- ```ARS12_noscaffold_masked.fa``` : Domestic goat ARS1.2 reference genome (GCF_001704415.2)
+- ```3824_startU3.fa``` + ```3824_startU3_withprimers.fa``` : ENTV-2 (strain FR3824, PP669281.1) LTR5 reference sequences
+- ```3824_endU3RU5.fa``` + ```3824_endU3RU5_withprimers.fa``` : ENTV-2 (strain FR3824, PP669281.1) LTR3 reference sequences
+- ```3824_provirus_wo_LTR.fa``` : ENTV-2 (strain FR3824, PP669281.1) provirus without LTR reference sequences
 
 The reference host genome can be downloaded as bellow :
 ```sh
@@ -116,10 +115,11 @@ mkdir R_clonality bowtie2 extract_UMI mapping
 
 ##### Align the reads on LTR sequences and separate LTR5 and LTR3 
 ```sh
-# Reads aligned on 3824-ENTV2 reference sequence and keep those with
-# MAPQ > 20 + length > length linker+mapped_genome+LTR
-# For LTR5 read length > 57+50+63
-# For LTR3 read length > 57+50+188
+# Keep reads with quality Q > 20
+# Reads aligned on ENTV2-FR3824 LTR5 and LTR3 reference sequences and keep those with
+# Read with length > length linker + mapped genome + LTR
+# For LTR5 read must have length > 57+50+63
+# For LTR3 read must have length > 57+50+188
 bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -r ${WORKDIR}/IS_pipeline/test_file/ref \
   -o ${WORKDIR}/test_IS/bowtie2 \
@@ -148,7 +148,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/extract_umi.sh \
 
 ##### Mapping of the reads on the virus + host ref genomes
 ```sh
-# Reads are mapped on ARS1.2 domestic goat genome supplemented by 3824-ENTV2 reference sequence 
+# Reads are mapped on ARS1.2 (GCF_001704415.2) domestic goat genome concatenated with ENTV2 - FR3824 LTR reference sequences 
 bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -r ${WORKDIR}/IS_pipeline/test_file/ref \
   -f ARS12_noscaffold_masked.fa \
