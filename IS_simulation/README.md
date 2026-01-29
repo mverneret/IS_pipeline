@@ -1,6 +1,6 @@
 # IS and reads simulation
 To test the pipeline (basecalling and demultiplexing steps are not included), test files  are available in the ```test_file/``` folder. 
-These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using domestic goat genome (GCF_001704415.2) and ENTV-2 (3824) as reference sequences. 
+These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using ARS1.2 domestic goat genome (GCF_001704415.2) and ENTV-2 LTRs (strain FR3824, PP669281.1) as reference sequences. 
 
 Reads are simulated using several steps and follow the principle to have one read per IS:
 - Generate random IS sites taking the chromosome size into account using ```random_sites.py```
@@ -41,7 +41,7 @@ WORKDIR="$(pwd)"
 
 # Domestic goat is used as reference genome (GCF_001704415.2).
 # Check the 3- step of the test_file/README.md for genome download and preparation
-# LTRs sequences from 3824-ENTV2 are used and present in the seq_LTR_linker.fasta file for simulation
+# LTRs sequences from ENTV2-FR3824 are used and present in the seq_LTR_linker.fasta file for simulation
 # Simulate 1000 IS and reads with 260bp of flanking goat genome
 bash ${WORKDIR}/IS_pipeline/IS_simulation/scripts/simulate_reads.sh \
   -r ${WORKDIR}/IS_pipeline/test_file/ref/ARS12_noscaffold_masked.fa \
