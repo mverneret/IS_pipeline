@@ -16,7 +16,7 @@ git clone https://github.com/mverneret/IS_pipeline.git
 
 ### 2- Install dependancies
 
-**Using mamba**
+**Installation with mamba/conda**
 
 - Charge the .yml file
 ```sh
@@ -54,7 +54,7 @@ mamba create -n IS_pipeline \
 mamba activate IS_pipeline
 ```
 
-**Using sudo rights**
+**Installation with Ubuntu**
 
 ```sh
 sudo apt update
