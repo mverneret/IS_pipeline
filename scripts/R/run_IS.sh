@@ -6,14 +6,14 @@ set -euo pipefail
 #######################
 show_help() {
     echo "Usage: $0 -i SAMPLE_NAME -r R_PACKAGE_PATH -o OUT_PATH -p INPUT_PAF_PATH -u INPUT_UMI_PATH -a ASSEMBLY \\"
-    echo "          -5 TNAME_LTR5 -L LENGTH_LTR5 -3 TNAME_LTR3 -l LENGTH_LTR3 \\"
+    echo "          -5 TNAME_LTR5 -3 TNAME_LTR3 \\"
     echo "          -g MAXGAP_IS -q MAPQ -n NB_READ_PER_UMI -s MAXGAP_SHS -m MMS -t THRESHOLD_RAW -w WIN_MERGE"
 }
 
 #######################
 # Parse arguments
 #######################
-while getopts "i:r:o:p:u:a:5:L:3:l:g:q:n:s:m:t:w:h" opt; do
+while getopts "i:r:o:p:u:a:5:3:g:q:n:s:m:t:w:h" opt; do
     case $opt in
         i) SAMPLE_NAME="$OPTARG" ;;
         r) R_PACKAGE_PATH="$OPTARG" ;;
@@ -22,9 +22,7 @@ while getopts "i:r:o:p:u:a:5:L:3:l:g:q:n:s:m:t:w:h" opt; do
         u) INPUT_UMI_PATH="$OPTARG" ;;
         a) ASSEMBLY="$OPTARG" ;;
         5) TARGET_LTR5="$OPTARG" ;;
-        L) LENGTH_LTR5="$OPTARG" ;;
         3) TARGET_LTR3="$OPTARG" ;;
-        l) LENGTH_LTR3="$OPTARG" ;;
         g) MAXGAP_IS="$OPTARG" ;;
         q) MAPQ_VAL="$OPTARG" ;;
         n) NB_READ_PER_UMI="$OPTARG" ;;
@@ -41,7 +39,7 @@ done
 # Check required arguments
 #######################
 if [[ -z "${SAMPLE_NAME:-}" || -z "${R_PACKAGE_PATH:-}" || -z "${OUT_PATH:-}" || -z "${INPUT_PAF_PATH:-}" || -z "${INPUT_UMI_PATH:-}" || -z "${ASSEMBLY:-}" || \
-      -z "${TARGET_LTR5:-}" || -z "${LENGTH_LTR5:-}" || -z "${TARGET_LTR3:-}" || -z "${LENGTH_LTR3:-}" || \
+      -z "${TARGET_LTR5:-}" || -z "${TARGET_LTR3:-}" || \
       -z "${MAXGAP_IS:-}" || -z "${MAPQ_VAL:-}" || -z "${NB_READ_PER_UMI:-}" || -z "${MAXGAP_SHS:-}" || \
       -z "${MMS:-}" || -z "${THRESHOLD_RAW:-}" || -z "${WIN_MERGE:-}" ]]; then
     echo "Error: Missing required arguments"
@@ -84,9 +82,7 @@ Rscript "${R_SCRIPT_DIR}/run_IS_script_1.R" \
     "$INPUT_PAF_PATH" \
     "$INPUT_UMI_PATH" \
     "$TARGET_LTR5" \
-    "$LENGTH_LTR5" \
     "$TARGET_LTR3" \
-    "$LENGTH_LTR3" \
     "$MAPQ_VAL" \
     "$ASSEMBLY"
 
