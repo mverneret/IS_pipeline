@@ -1,0 +1,29 @@
+name: IS_pipeline
+channels:
+  - bioconda
+  - R
+  - conda-forge
+dependencies:
+  - python=3.10.14
+  - r-base=4.3.3
+  - bowtie2=2.5.2
+  - nanofilt=2.8.0
+  - samtools=1.16.1
+  - bedtools=2.30.0
+  - seqtk=1.4
+  - minimap2=2.26
+  - edlib
+  - pysam
+  - tqdm
+  - pandas
+  - biopython
+  - r-biocmanager
+  - r-stringdist
+  - r-changepoint
+  - r-tidyverse
+  - bioconductor-genomicranges
+  - bioconductor-rsamtools
+  - bioconductor-genomicalignments
+  - ca-certificates
+  - openssl
+prefix: /var/lib/miniforge/envs/IS_pipeline
