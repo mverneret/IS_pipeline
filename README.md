@@ -85,7 +85,7 @@ Outputs for each LTR${a} with a in {3,5}:
 ## 4- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads.
 We thus modified a python script from the INSERT-seq pipeline ([Ivančić et al., 2022](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02778-9)) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
-Briefly this script is based on the specific structure of the UMIs integrated in the fixed linker sequences. These UMI are 16bp long and composed as bellow :
+Briefly this script is based on the specific structure of the UMIs integrated in the fixed linker sequences. These UMI are 28bp long and composed as bellow :
 - ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward orientation
 - ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reverse orientation
 
