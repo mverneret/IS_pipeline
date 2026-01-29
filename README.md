@@ -171,7 +171,7 @@ All these steps can be performed using ```run_IS.sh``` script that will call dif
 **Usage**
 ```sh
 ./run_IS.sh -i SAMPLE_NAME -r R_PACKAGE_PATH -o OUT_PATH -p INPUT_PAF_PATH -u INPUT_UMI_PATH -a ASSEMBLY \
-          -5 TNAME_LTR5 -L LENGTH_LTR5 -3 TNAME_LTR3 -l LENGTH_LTR3 \
+          -5 TNAME_LTR5 -3 TNAME_LTR3 \
           -g MAXGAP_IS -q MAPQ -n NB_READ_PER_UMI -s MAXGAP_SHS -m MMS -t THRESHOLD_RAW -w WIN_MERGE
 
 Options:
@@ -183,9 +183,7 @@ Options:
   -a <ASSEMBLY>            | Name of the reference genome assembly
 
   -5 <TNAME_LTR5>          | Name of the LTR5 virus sequence (used for the minimap2 mapping)
-  -L <LENGTH_LTR5>         | Total length of the LTR5 sequence (with primers)
   -3 <TNAME_LTR3>          | Name of the LTR3 virus sequence (used for the minimap2 mapping)
-  -l <LENGTH_LTR3>         | Total length of the LTR3 sequence (with primers)
 
   -g <MAXGAP_IS>           | Maximal distance between IS to merge
   -q <MAPQ>                | Minimum quality of mapping
