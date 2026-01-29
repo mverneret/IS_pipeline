@@ -47,10 +47,10 @@ dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/RUN_${i}_SUP.bam --output-dir
 
 ## 3- Filtering steps
 Reads are filtered according to different criteria including :
-- Mapping quality (> Q20)
-- Mapping on the LTR5 start or LTR3 end
+- Reads quality (> Q20)
+- Mapping on LTR5 start or LTR3 end
 - Not mapping on provirus without LTR sequences
-- Host genome size mapped (> 50bp)
+- Minimum host genome size mapped (> 50bp)
 
 All these steps can be performed using the ```filter_reads.sh``` script that will deal with LTR5 and LTR3 reads separatly.
 
