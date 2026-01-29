@@ -73,7 +73,7 @@ Options:
 
 Input files :
 - Fastq files from demultiplexing
-- Fasta sequences of the reference virus without primers (LTR5:"endU3RU5"; LTR3:"stratU3"; INT:"provirus_wo_LTR")
+- Fasta sequences of the reference virus without primers (LTR5:"endU3RU5"; LTR3:"stratU3"; Provirus without LTRs:"provirus_wo_LTR")
     - ```${VIRUS_NAME}_startU3.fa``` + ```${VIRUS_NAME}_startU3_withprimers.fa``` (LTR5)
     - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
     - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
@@ -160,6 +160,7 @@ After the mapping, the goal is to identify the different integration sites using
 The main steps are:
 - Keep reads mapped on the host genome and on the LTR sequences
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
+- Create IS groups clustering reads with IS < maxgapIS
 - Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
 - Remove PCR duplicates according to the IS, ShS and UMI groups
 - Merge LTR5 and LTR3 information and keep max sister cells count
