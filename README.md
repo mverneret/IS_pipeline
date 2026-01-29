@@ -12,19 +12,19 @@ ___
 
 ## Dependancies
 - dorado
-- bowtie2 (2-2.1.0)
+- bowtie2 (2.5.2)
 - Nanofilt (2.8.0)
 - samtools (1.16.1)
-- bedtools (v2.30.0)
+- bedtools (2.30.0)
 - python (3.10.14)
     - edlib
     - pysam
     - tqdm
     - pandas
     - biopython
-- minimap2 (2.26-r1175) + paftools.js
-- seqkt (1.5-r133)
-- R (> 4.3.1)
+- minimap2 (2.26) + paftools.js
+- seqkt (1.4)
+- R (4.3.3)
     - GenomicRanges
     - Rsamtools
     - changepoint
