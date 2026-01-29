@@ -1,5 +1,8 @@
 # Integration Sites pipeline
-Pipeline inspired from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)) and INSERT-seq ([Ivančić et al., 2022](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02778-9)) pipelines to identify integration sites (IS) by long read sequencing using Nanopore technology. To do this, the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers. The resulting reads are filtered to keep only the one including viral and host sequences. The main steps and expected structure of the reads are shown bellow for LTR3. Same principle is applied for LTR5.
+Pipeline optimized to identify integration sites (IS) by long read sequencing using Nanopore technology. 
+To do this, the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers. 
+The resulting reads are filtered to keep only the one including viral and host sequences. The main steps and expected structure of the reads are shown bellow for LTR3. 
+Same principle is applied for LTR5.
 
 <img src="image/Image2.png" width="70%">
 
@@ -80,8 +83,8 @@ Outputs for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Reads mapped on LTR but not provirus + size filtering
 
 ## 4- Extract UMI 
-In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads. 
-We thus modified a python script from the INSERT-seq pipeline (Ivančić et al., 2022) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
+In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads.
+We thus modified a python script from the INSERT-seq pipeline ([Ivančić et al., 2022](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02778-9)) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
 Briefly this script is based on the specific structure of the UMIs integrated in the fixed linker sequences. These UMI are 16bp long and composed as bellow :
 - ```"TTTVVVVTTVVVVTTVVVVTTVVVVTTT"``` : where "T" nucleotides are fixed and V are either "A", "G" or "C" for forward orientation
 - ```"AAABBBBAABBBBAABBBBAABBBBAAA"``` : where "A" nucleotides are fixed and B are either "T", "G" or "C" for reverse orientation
@@ -153,7 +156,8 @@ Output files for each LTR${a} with a in {3,5}:
  
 
 ## 6- Integration sites extraction
-After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. The main steps are:
+After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. This step <as adapted from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)).  
+The main steps are:
 - Keep reads mapped on the host genome and on the LTR sequences
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
 - Create ShS groups clustering reads with ShS < maxgapShS + UMI group using ```UMI_clustering_hamming_ref.py``` if reads have same UMI (+/- x mismatches)
