@@ -1,10 +1,55 @@
 # Install and test dataset
-All the steps to install and set up the pipeline are detailed bellow. 
-The pipeline can be tested using the test dataset composed of simulated reads obtained using ARS1.2 domestic goat genome (GCF_001704415.2) and ENTV-2 (strain FR3824, PP669281.1) as reference sequences.
-Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced. 
+The pipeline can be tested using the test dataset composed of simulated reads obtained using ARS1.2 domestic goat genome (GCF_001704415.2) and ENTV-2 (strain FR3824, PP669281.1) as reference sequences.\
+Check on ```IS_simulation/README.rmd``` for more information on how the simulated reads were produced.
 
-## Running tutorial
-### 1- Install dependancies
+All the steps to install and set up the pipeline are detailed bellow. 
+
+### 1- Clone the IS_pipeline repository
+```sh
+git clone https://github.com/mverneret/IS_pipeline.git
+```
+
+### 2- Install dependancies
+
+**Using mamba**
+
+- Re-create the mamba environment
+```sh
+mamba env create -f IS_pipeline.yml
+```
+
+- **OR** create the mamba environment directly
+```sh
+mamba create -n IS_pipeline \
+  python=3.10.14 \
+  r-base=4.3.3 \
+  bowtie2=2.5.2 \
+  nanofilt=2.8.0 \
+  samtools=1.16.1 \
+  bedtools=2.30.0 \
+  seqtk=1.4 \
+  minimap2=2.26 \
+  edlib \
+  pysam \
+  tqdm \
+  pandas \
+  biopython \
+  r-biocmanager \
+  r-stringdist \
+  r-changepoint \
+  r-tidyverse \
+  bioconductor-genomicranges \
+  bioconductor-rsamtools \
+  bioconductor-genomicalignments \
+  -c conda-forge -c bioconda
+```
+
+- Activate the mamba environment:
+```sh
+mamba activate IS_pipeline
+```
+
+**Using sudo rights**
 
 ```sh
 sudo apt update
@@ -66,11 +111,6 @@ sudo apt install -y \
 # In R
 install.packages("tidyverse")
 library(tidyverse)
-```
-
-### 2- Clone the IS_pipeline repository
-```sh
-git clone https://github.com/mverneret/IS_pipeline.git
 ```
 
 ### 3- The ref/ folder and reference files
@@ -169,9 +209,7 @@ bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
   -u ${WORKDIR}/test_IS/extract_UMI/ \
   -a "ARS12_noscaffold_masked.fa" \
   -5 "3824_startU3" \
-  -L 63 \
   -3 "3824_endU3RU5" \
-  -l 188 \
   -g 15 \
   -q 20 \
   -n 1 \
