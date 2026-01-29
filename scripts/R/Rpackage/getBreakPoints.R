@@ -1,10 +1,9 @@
-getBreakPoints <- function(PAF = NULL, lengthTarget = NULL, targetName = NULL, gapAlignment = NA, distanceToLTR = NA, returnFILTEREDout = FALSE){
+getBreakPoints <- function(PAF = NULL, targetName = NULL, gapAlignment = NA, distanceToLTR = NA, returnFILTEREDout = FALSE){
   
   suppressPackageStartupMessages(library(tidyverse))
   suppressPackageStartupMessages(library(GenomicRanges))
   
   if(is_empty(PAF)){ stop('Empty or Absent PAF argument!') }
-  if(is_empty(lengthTarget)){ stop('Empty or Absent lengthTarget argument! Please provide the length of the TARGET chromosome') }
   if(is_empty(targetName)){ stop('Empty or Absent targetName argument! Please provide the TARGET chromosome name') }
   if(isFALSE(all(c("ligation", "mapGap") %in% colnames(PAF)))){ stop('PAF needs to be prepared with filter_chimeric() prior to getBreakPoints()!') }
   
