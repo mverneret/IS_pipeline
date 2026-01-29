@@ -13,7 +13,7 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # Help function
 print_help <- function() {
-  cat("\nUsage: Rscript run_IS_script_1.R <R_package_path> <sample_name> <out.path> <paf.path> <umi.path> <LTR5_targetName> <LTR5_lengthTarget> <LTR3_targetName> <LTR3_lengthTarget> <mapq.val> <assembly>\n")
+  cat("\nUsage: Rscript run_IS_script_1.R <R_package_path> <sample_name> <out.path> <paf.path> <umi.path> <LTR5_targetName> <LTR3_targetName> <mapq.val> <assembly>\n")
   cat("\nArguments:\n")
   cat("  R_package_path       Path to the directory containing required R functions\n")
   cat("  sample_name          Name of the sample being processed (e.g., 'barcode01')\n")
@@ -21,9 +21,7 @@ print_help <- function() {
   cat("  paf.path             Path to the PAF (Pairwise Alignment Format) files\n")
   cat("  umi.path             Path to the UMI (Unique Molecular Identifier) files\n")
   cat("  LTR5_targetName      Name of the target sequence for the 5' LTR\n")
-  cat("  LTR5_lengthTarget    Length of the 5' LTR target sequence\n")
   cat("  LTR3_targetName      Name of the target sequence for the 3' LTR\n")
-  cat("  LTR3_lengthTarget    Length of the 3' LTR target sequence\n")
   cat("  mapq.val             Minimum mapping quality value\n")
   cat("  assembly             Name of the reference assembly used for mapping (e.g., 'ARS' for *_LTR5_mapped_ARS_SUP.paf)\n")
   quit(status = 0)
@@ -35,7 +33,7 @@ if (length(args) == 1 && (args[1] == "--help" || args[1] == "-h")) {
 }
 
 # Ensure correct number of arguments
-if (length(args) < 10) {
+if (length(args) < 9) {
   cat("\nError: Missing arguments!\n")
   print_help()
 }
@@ -52,16 +50,13 @@ source(paste(R_package_path,"getpositionReads.R", sep=""))
 sample_name=args[2]
 out.path = args[3]
 paf.path = args[4]
-assembly = args[11]
+assembly = args[9]
 umi.path = args[5]
 
 LTR5_targetName = args[6]
-LTR5_lengthTarget = as.numeric(args[7])
+LTR3_targetName = args[7]
 
-LTR3_targetName = args[8]
-LTR3_lengthTarget = as.numeric(args[9])
-
-mapq.val = as.numeric(args[10])
+mapq.val = as.numeric(args[8])
 
 print("0. ------ Load files and remove reads present in both LTR5 and LTR3 files ------")
 PAF_LTR5.path = paste(paf.path,sample_name,"_LTR5_mapped_",assembly,"_SUP.paf", sep="")
@@ -85,7 +80,7 @@ LTR="LTR5"
 PAF_LTR5.filter <- filter_chimeric(minimap2PAF = PAF_LTR5, targetName = LTR5_targetName)
 
 # 2. Get The Read Target-Host Junctions And Shear Sites.
-PAF_LTR5.breakpoints <- getBreakPoints(PAF = PAF_LTR5.filter, lengthTarget = LTR5_lengthTarget, targetName = LTR5_targetName)
+PAF_LTR5.breakpoints <- getBreakPoints(PAF = PAF_LTR5.filter, targetName = LTR5_targetName)
 
 # 3.Get the random Tag/UMI of each read
 LTR5_UMI.path=paste(umi.path,sample_name,"_LTR5_UMI.fasta", sep="")
@@ -114,7 +109,7 @@ LTR="LTR3"
 PAF_LTR3.filter <- filter_chimeric(minimap2PAF = PAF_LTR3, targetName = LTR3_targetName)
 
 # 2. Get The Read Target-Host Junctions And Shear Sites.
-PAF_LTR3.breakpoints <- getBreakPoints(PAF = PAF_LTR3.filter, lengthTarget = LTR3_lengthTarget, targetName = LTR3_targetName)
+PAF_LTR3.breakpoints <- getBreakPoints(PAF = PAF_LTR3.filter, targetName = LTR3_targetName)
 
 # 3.Get the random Tag/UMI of each read
 LTR3_UMI.path=paste(umi.path,sample_name,"_LTR3_UMI.fasta", sep="")
@@ -135,4 +130,3 @@ for (i in 1:length(chromosome_list.LTR3)) {
                                paste(out.path, sample_name, paste("_data2_", chromosome_name,"_",LTR, ".txt", sep=""), sep=""),
                                sep="\t", quote=F, row.names=F, col.names=T, append = TRUE))
 }
-
