@@ -48,7 +48,7 @@ for ref in "endU3RU5" "startU3" "provirus_wo_LTR"; do
   FASTA="${REF_DIR}/${REF_NAME}_${ref}.fasta"
   if [ ! -f "$INDEX" ]; then
     echo "Index for ${FASTA} does not exist. Building index..."
-    bowtie2-build "$FASTA" "${FASTA%.fasta}_index"
+    bowtie2-build --quiet "$FASTA" "${FASTA%.fasta}_index"
   else
     echo "Index for ${FASTA} already exists. Skipping."
   fi
