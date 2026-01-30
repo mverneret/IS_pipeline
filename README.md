@@ -76,7 +76,7 @@ Input files :
 - Fasta sequences of the reference virus without primers (LTR5:"endU3RU5"; LTR3:"stratU3"; Provirus without LTRs:"provirus_wo_LTR")
     - ```${VIRUS_NAME}_startU3.fa``` + ```${VIRUS_NAME}_startU3_withprimers.fa``` (LTR5)
     - ```${VIRUS_NAME}_endU3RU5.fa``` + ```${VIRUS_NAME}_endU3RU5_withprimers.fa``` (LTR3)
-    - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (INT)
+    - ```${VIRUS_NAME}_provirus_wo_LTR.fa``` (provirus without LTR)
   
 Outputs for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
@@ -116,10 +116,11 @@ Output files for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMI sequences in the read names
   
 ## 5- Mapping
-The filtered reads are then mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
+The filtered reads are then trimmed using cutadapt to remove the linker sequences and mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
 The steps includes :
 - Masking the reference genome with the apparented ERV sequences
 - Create the hybrid reference concatenating host genome and LTR sequences
+- Trim the reads to remove the linker and UMI sequences
 - Map the filtered reads on the hybrid genome using minimap2
 
 The first optional step is to prepare the host reference genome (masking + delete scaffold if wanted):
@@ -135,7 +136,7 @@ The mapping can then be performed using the ```mapping.sh``` script.
 
 **Usage**
 ```sh
-./mapping.sh -r <string> -f <string> -o <string> -q <string> -n <string> -i <string>
+./mapping.sh -r <string> -f <string> -o <string> -q <string> -n <string> -i <string> [-t <bool>]
 
 Options:
   -r <REF_DIR>         | Path to directory of the reference files
@@ -144,6 +145,7 @@ Options:
   -q <FASTQ_DIR>       | Path to directory containining the input .fastq files
   -n <VIRUS_NAME>      | Name of the virus sequence used in reference for the target
   -i <SAMPLE_PREFIX>   | Sample prefix for output files
+  -t <DO_TRIM>         | Ask to trim the reads (default:FALSE)
 ```
 
 Input files for each LTR${a} with a in {3,5}:
@@ -178,7 +180,7 @@ Options:
   -i <SAMPLE_NAME>         | Name of the sample (ex: barcode01)
   -r <R_PACKAGE_PATH>      | Path to directory of the different R functions (ex: "~/script/Rpackages/")
   -o <OUT_PATH>            | Path to directory for output files (ex: "~/results/R_clonality/")
-  -p <INPUT_PAF_PATH>      | Path to directory of the paf input files obtained after the step 5 (ex: "~/results/mapping/paf/")
+  -p <INPUT_PAF_PATH>      | Path to directory of the paf input files obtained after the step 5 (ex: "~/results/mapping/")
   -u <INPUT_UMI_PATH>      | Path to directory of the UMI input files obtained after the step 4 (ex: "~/results/extract_UMI/")
   -a <ASSEMBLY>            | Name of the reference genome assembly
 
