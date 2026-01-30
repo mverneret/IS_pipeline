@@ -34,6 +34,7 @@ mamba create -n IS_pipeline \
   bedtools=2.30.0 \
   seqtk=1.4 \
   minimap2=2.26 \
+  cutadapt=5.2 \
   edlib \
   pysam \
   tqdm \
