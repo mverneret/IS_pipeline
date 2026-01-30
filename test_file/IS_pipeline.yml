@@ -1,8 +1,8 @@
 name: IS_pipeline
 channels:
   - bioconda
-  - R
   - conda-forge
+  - defaults
 dependencies:
   - python=3.10.14
   - r-base=4.3.3
@@ -12,6 +12,7 @@ dependencies:
   - bedtools=2.30.0
   - seqtk=1.4
   - minimap2=2.26
+  - cutadapt=5.2
   - edlib
   - pysam
   - tqdm
@@ -24,6 +25,4 @@ dependencies:
   - bioconductor-genomicranges
   - bioconductor-rsamtools
   - bioconductor-genomicalignments
-  - ca-certificates
-  - openssl
-prefix: /var/lib/miniforge/envs/IS_pipeline
+prefix: /beegfs/data/mverneret/miniforge3/envs/IS_pipeline
