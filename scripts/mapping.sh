@@ -92,9 +92,7 @@ for LTR_NUM in 3 5; do
 
     FASTQ_FILE="${FASTQ_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_filtered_size_SUP.fastq"
     SAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.sam"
-    BAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.bam"
-    SORTED_BAM_FILE="${OUT_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_sorted_SUP.bam"
-
+    
     echo "Mapping $FASTQ_FILE to LTR${LTR_NUM} reference..."
     minimap2 -ax map-ont -t 8 "$MMI_FILE" "$FASTQ_FILE" > "$SAM_FILE"
 
@@ -103,10 +101,6 @@ for LTR_NUM in 3 5; do
     mkdir -p "$PAF_DIR"
     paftools.js sam2paf "$SAM_FILE" > "${PAF_DIR}/${SAMPLE_PREFIX}_LTR${LTR_NUM}_mapped_${REF_NAME}_SUP.paf"
 
-    # Convert SAM -> BAM -> sorted BAM
-    samtools view -@ 4 -Sb "$SAM_FILE" > "$BAM_FILE"
-    samtools sort -@ 4 "$BAM_FILE" -o "$SORTED_BAM_FILE"
-    samtools index -@ 4 "$SORTED_BAM_FILE"
 done
 
 #######################
