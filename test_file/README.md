@@ -135,16 +135,17 @@ bash ${WORKDIR}/IS_pipeline/scripts/mapping.sh \
   -q ${WORKDIR}/test_IS/bowtie2 \
   -n 3824 \
   -i random_IS_CH_1k \
+  -t TRUE \
   > ${WORKDIR}/test_IS/random_IS_CH_1k_mapping.log 2>&1
 ```
 
 ##### Identify integration sites
 ```sh
 bash ${WORKDIR}/IS_pipeline/scripts/R/run_IS.sh \
-  -i random_IS_CH_1k \
+  -i random_IS_CH_1k_trim \
   -r ${WORKDIR}/IS_pipeline/scripts/R/Rpackage/ \
   -o ${WORKDIR}/test_IS/R_clonality/ \
-  -p ${WORKDIR}/test_IS/mapping/paf/ \
+  -p ${WORKDIR}/test_IS/mapping/ \
   -u ${WORKDIR}/test_IS/extract_UMI/ \
   -a "ARS12_noscaffold_masked.fa" \
   -5 "3824_startU3" \
