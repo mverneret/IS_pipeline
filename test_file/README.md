@@ -102,7 +102,7 @@ mkdir R_clonality bowtie2 extract_UMI mapping
 bash ${WORKDIR}/IS_pipeline/scripts/filter_reads.sh \
   -r ${WORKDIR}/IS_pipeline/test_file/ref \
   -o ${WORKDIR}/test_IS/bowtie2 \
-  -f ${WORKDIR}/IS_pipeline/IS_simulation/test_file/random_IS_CH_1k_reads.fq \
+  -f ${WORKDIR}/IS_pipeline/IS_simulation/test_file/random_IS_CH_1k.fq \
   -i random_IS_CH_1k \
   -n 3824 \
   -q 20 \
