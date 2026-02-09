@@ -11,7 +11,6 @@ ___
 <img src="image/Image1.png" width="60%">
 
 ## Dependancies
-- dorado
 - bowtie2 (2.5.2)
 - Nanofilt (2.8.0)
 - samtools (1.16.1)
@@ -32,20 +31,7 @@ ___
     - GenomicAlignments
     - stringdist
 
-## 1- Basecalling
-Basecalling was performed on the files generated from the different sequencing runs using the Dorado basecaller using super accurate basecalling with GPU acceleration, converting .fast5 to .bam formats.
-```sh
-dorado basecaller --no-trim dna_r10.4.1_e8.2_400bps_sup@v5.0.0 $DATA_DIR > $OUT_BAM_DIR/RUN_${i}_SUP.bam
-dorado summary $OUT_BAM_DIR/RUN_${i}_SUP.bam > $OUT_BAM_DIR/RUN_${i}_SUP_summary.tsv
-```
-
-## 2- Demultiplexing
-Demultiplexing was conducted also using Dorado to separate reads by barcode and remove the Nanopore barcodes at both reads sides.
-```sh
-dorado demux --kit-name SQK-NBD114-96 $OUT_BAM_DIR/RUN_${i}_SUP.bam --output-dir $OUTPUT_DIR/demux_both_end --barcode-both-ends --emit-fastq
-```
-
-## 3- Filtering steps
+## 1- Filtering steps
 Reads are filtered according to different criteria including :
 - Reads quality (> Q20)
 - Mapping on LTR5 start or LTR3 end
@@ -82,7 +68,7 @@ Outputs for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_mapping_LTR${a}_SUP.sam``` : Mapping results on start LTR5 or end LTR3
 - ```${SAMPLE_NAME}_LTR${a}_filtered_size_SUP.fastq``` : Reads mapped on LTR but not provirus + size filtering
 
-## 4- Extract UMI 
+## 2- Extract UMI 
 In order to remove PCR duplicates for clonality quantification in the Step 6- it is necessary to extract UMI sequences from all the reads.
 We thus modified a python script from the INSERT-seq pipeline ([Ivančić et al., 2022](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02778-9)) to adapt it to our needs (```insert_seq_extract_umi_modif.py```). 
 Briefly this script is based on the specific structure of the UMIs integrated in the fixed linker sequences. These UMI are 28bp long and composed as bellow :
@@ -115,7 +101,7 @@ Input files for each LTR${a} with a in {3,5}:
 Output files for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_LTR${a}_UMI.fasta``` : read sequences with identified UMI sequences in the read names
   
-## 5- Mapping
+## 3- Mapping
 The filtered reads are then trimmed using cutadapt to remove the linker sequences and mapped on the reference genome concatenated with the virus start LTR5 and end LTR3 sequences in order to detect the HOST-TARGET junctions.
 The steps includes :
 - Masking the reference genome with the apparented ERV sequences
@@ -157,7 +143,7 @@ Output files for each LTR${a} with a in {3,5}:
 - ```${SAMPLE_NAME}_LTR${a}_mapped_ref_noscaffold_masked.fa_SUP.paf``` : minimap2 output file in paf
  
 
-## 6- Integration sites extraction
+## 4- Integration sites extraction
 After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. This step <as adapted from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)).  
 The main steps are:
 - Keep reads mapped on the host genome and on the LTR sequences
