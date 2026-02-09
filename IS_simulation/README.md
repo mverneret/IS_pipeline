@@ -36,9 +36,6 @@ Output files:
 
 ### Example of usage
 ```sh
-WORKDIR="$(pwd)" 
-##Ex on VM : "/home/ubuntu/data/mydatalocal"
-
 # Domestic goat is used as reference genome (GCF_001704415.2).
 # Check the 3- step of the test_file/README.md for genome download and preparation
 # LTRs sequences from ENTV2-FR3824 are used and present in the seq_LTR_linker.fasta file for simulation
