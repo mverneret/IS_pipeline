@@ -1,5 +1,5 @@
 # IS and reads simulation
-To test the pipeline (basecalling and demultiplexing steps are not included), test files  are available in the ```test_file/``` folder. 
+To test the pipeline, test files  are available in the ```test_file/``` folder. 
 These test files were generated from simulated reads obtained using the scripts available in the ```IS_simulation/scripts/``` folder using ARS1.2 domestic goat genome (GCF_001704415.2) and ENTV-2 LTRs (strain FR3824, PP669281.1) as reference sequences. 
 
 Reads are simulated using several steps and follow the principle to have one read per IS:
