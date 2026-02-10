@@ -8,7 +8,7 @@ Same principle is applied for LTR5.
 
 ___
 ## Workflow
-<img src="image/Image1.png" width="60%">
+<img src="image/IS_pipeline.png" width="60%">
 
 ## Dependancies
 - bowtie2 (2.5.2)
