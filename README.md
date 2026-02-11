@@ -144,7 +144,7 @@ Output files for each LTR${a} with a in {3,5}:
  
 
 ## 4- Integration sites extraction
-After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. This step was adapted from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)).  
+After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. This step was adapted from PCIP-seq pipeline ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)).  
 
 <img src="image/PCR-duplicates_pipeline.png" width="60%">
 
