@@ -1,6 +1,6 @@
 # Integration Sites pipeline
 Pipeline optimized to identify integration sites (IS) by long read sequencing using Nanopore technology. 
-To do this, the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers. 
+To do this, the extracted DNA is first fragmented by sonication and the junction between HOST-TARGET sequences (here virus sequences) are amplified by two successive PCRs using specific primers (Ligation-Mediated-PCR). 
 The resulting reads are filtered to keep only the one including viral and host sequences. The main steps and expected structure of the reads are shown bellow for LTR3. 
 Same principle is applied for LTR5.
 
