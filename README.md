@@ -145,6 +145,9 @@ Output files for each LTR${a} with a in {3,5}:
 
 ## 4- Integration sites extraction
 After the mapping, the goal is to identify the different integration sites using reads at the junction between LTR sequences and host genome. This step <as adapted from PCIP-seq ([Artesi et al., 2021](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02307-0)).  
+
+<img src="image/IS_pipeline.png" width="60%">
+
 The main steps are:
 - Keep reads mapped on the host genome and on the LTR sequences
 - Get the Integration Sites (IS) corresponding to the HOST-LTR junction and ShearSites (ShS) corresponding to HOST-LINKER junction
